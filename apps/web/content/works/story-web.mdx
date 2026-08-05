@@ -1,0 +1,78 @@
+---
+title: "story-web"
+description: "一个以 GitHub 为内容真源、同时承载简历、文章、作品与画板的个人网站。"
+date: "2026-08-04"
+updated: "2026-08-04"
+tags:
+  - 个人网站
+  - Monorepo
+  - MDX
+published: true
+featured: true
+kind: work
+role: "产品设计 / 信息架构 / 前端实现"
+stack:
+  - Next.js
+  - TypeScript
+  - Tailwind CSS
+  - MDX
+  - Excalidraw
+repository: "https://github.com/songxiaopeng529/story-web"
+year: "2026"
+---
+
+story-web 是这个个人网站本身，也是一次关于“如何长期拥有自己的内容”的实践。它从三个最小入口开始：首页是简历，另外两个入口分别通往文章和作品。
+
+<Callout type="note" title="当前状态">
+  项目仍在建设中。本页记录的是已经确定并正在实现的结构，不把规划中的能力描述成已经上线的结果。
+</Callout>
+
+## 问题
+
+个人内容很容易随着工具增加而分散：简历更新了一版，作品说明仍停在旧文件；文章发布到了平台，但原始画板没有可靠的归档位置。与其先做一个功能齐全的后台，这个项目先解决更基础的问题：
+
+> 能不能用一套足够简单的文件协议，让内容可写、可审阅、可发布，也可在未来迁移？
+
+## 当前方案
+
+| 关注点 | 选择              | 目的                             |
+| ------ | ----------------- | -------------------------------- |
+| 内容   | Markdown / MDX    | 保留可读、可迁移的正文真源       |
+| 管理   | GitHub            | 复用提交、PR、历史与回退         |
+| 页面   | Next.js 静态生成  | 减少运行时依赖，兼顾 SEO         |
+| 画板   | Excalidraw 源文件 | 将空间表达与正文一起纳入版本管理 |
+| 仓库   | pnpm + Turborepo  | 为未来应用与服务保留清晰边界     |
+
+<Whiteboard
+  src="/boards/story-web-content-flow.excalidraw"
+  title="story-web 的内容构建路径"
+/>
+
+## 设计原则
+
+- **内容先于容器**：文章和作品首先是可独立读取的文件，然后才被页面组织。
+- **服务端优先**：正文和列表在构建期完成，交互能力局部增强。
+- **不提前抽象**：只有出现第二个真实消费者时，才把共享逻辑移到 `packages/`。
+- **保留退路**：V1 部署在 Vercel，但内容模型不依赖 Vercel 专属服务。
+
+```text
+apps/web
+├── content
+│   ├── articles
+│   ├── works
+│   └── resume.ts
+├── public/boards
+└── src/app
+    ├── articles
+    └── works
+```
+
+## 下一步
+
+- [x] 初始化 Monorepo 与 Next.js 应用
+- [x] 定义内容字段与示例内容
+- [ ] 完成文章、作品与简历页面
+- [ ] 接入构建校验、RSS 与 sitemap
+- [ ] 在真实内容增长后复盘分类与检索需求
+
+项目是否成功，不由首页有多少效果决定，而取决于几个月之后更新一篇文章时，流程是否仍然足够轻松。

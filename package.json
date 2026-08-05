@@ -1,0 +1,27 @@
+{
+  "name": "story-web",
+  "version": "0.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.13.1",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "dev:web": "turbo run dev --filter=@story-web/web",
+    "build": "turbo run build",
+    "start:web": "turbo run start --filter=@story-web/web",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "content:generate": "turbo run content:generate",
+    "content:check": "turbo run content:check",
+    "test": "turbo run test",
+    "check": "turbo run content:check lint typecheck test build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.7"
+  }
+}
