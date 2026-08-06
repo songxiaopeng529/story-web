@@ -1,0 +1,55 @@
+apps/web/package.json
+  s_dbe71cda2495ad::t_df8ca834016fdd 12
+apps/web/src/app/globals.css
+  s_dbe71cda2495ad::t_dcaed7373197e7 5-17,28-32,35,37-41,61,75-76,95-96,113,115,140,154-156,162,172-173,179,196-201,211,220,261-265,269,282,318,324,327-328,341-342,348-349,355-359,363-364,366-367,371,373-374,378,387,393,395-396,409,413,427-428,432,434-438,448,468,473,483,516,526,530,533,537,545,557-558,560-561,568,577,587,590-595,600,607,611-614,616,633,643-645,649-652,654-656,662,666,677-682,687,689,693,697,702-705,707-709,713,726-727,733-734,778-779,789-790,792-793,809,823-826,828-829,834,837-838,856,864-865,884,900,903-906,934,977,990,1001,1019,1028,1034,1048,1053,1067,1079,1172-1173,1175-1176,1198,1217,1239,1262,1287-1288,1296,1327,1329,1354-1355,1364,1401,1430
+apps/web/src/app/icon.tsx
+  s_dbe71cda2495ad::t_c94ceafbbd421a 11-12
+apps/web/src/app/layout.tsx
+  s_dbe71cda2495ad::t_ad629370a79b2c 45
+apps/web/src/app/manifest.ts
+  s_dbe71cda2495ad::t_85deab60ea3450 12-13
+apps/web/src/app/page.tsx
+  s_3f18135a439ce6::t_3a977403c8a3c2 34-35,50-51,64,140-141,143-146,155-158,164-166
+apps/web/src/components/content/article-list.tsx
+  s_dbe71cda2495ad::t_2676a447fad9c8 14
+apps/web/src/components/content/table-of-contents.tsx
+  s_dbe71cda2495ad::t_405aa59d4182ab 20,28,31
+apps/web/src/components/content/work-list.tsx
+  s_dbe71cda2495ad::t_1078ee46ff9125 16,22
+apps/web/src/components/layout/intro-overlay.tsx
+  s_dbe71cda2495ad::t_f1ce3115f31422 29-30,60,65
+apps/web/src/components/layout/site-nav.tsx
+  s_dbe71cda2495ad::t_f7b35a5f1a68d6 7-9
+apps/web/src/mdx-components.tsx
+  s_dbe71cda2495ad::t_020cc9ef6e5b5c 2,8-24,39-40
+docs/design-research.md
+  s_dbe71cda2495ad::t_066d13a6f69eee 1-244
+docs/technical-design.md
+  s_dbe71cda2495ad::t_502c3a0cf53188 3-4,118-119,124,126-127,129,133-139,143
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.10",
+  "base_commit_sha": "098240bbd7d894d77f4c250c36fdf2133dae6889",
+  "prompts": {},
+  "sessions": {
+    "s_3f18135a439ce6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fd70f-1e62-7821-9c34-c5662cabb5a1",
+        "model": "unknown"
+      },
+      "human_author": "songxiaopeng <songxiaopeng@bytedance.com>"
+    },
+    "s_dbe71cda2495ad": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019fc707-0631-76e2-8eb9-12630b9031e4",
+        "model": "unknown"
+      },
+      "human_author": "songxiaopeng <songxiaopeng@bytedance.com>"
+    }
+  },
+  "attestation_metadata": {},
+  "remote_transcripts": {}
+}
