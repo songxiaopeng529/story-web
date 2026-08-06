@@ -17,7 +17,7 @@ function Contents({ headings }: TableOfContentsProps) {
 }
 
 export function TableOfContents({ headings }: TableOfContentsProps) {
-  if (!headings.length) return null;
+  if (headings.length < 3) return null;
 
   return (
     <>
@@ -25,10 +25,10 @@ export function TableOfContents({ headings }: TableOfContentsProps) {
         <summary>本页目录</summary>
         <Contents headings={headings} />
       </details>
-      <aside aria-label="本页目录" className="toc toc--desktop">
+      <nav aria-label="本页目录" className="toc toc--desktop">
         <p>本页目录</p>
         <Contents headings={headings} />
-      </aside>
+      </nav>
     </>
   );
 }

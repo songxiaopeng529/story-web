@@ -31,8 +31,8 @@ export default function Home() {
       <section aria-labelledby="home-title" className="home-hero">
         <Container className="home-hero__inner">
           <div className="home-hero__meta">
-            <p className="meta-label">01 / PORTFOLIO</p>
-            <p className="meta-label">GITHUB / OPEN ARCHIVE</p>
+            <p className="meta-label">个人档案 / 2026</p>
+            <p className="meta-label">GITHUB / CONTENT SOURCE</p>
           </div>
           <div className="home-hero__grid">
             <div>
@@ -47,8 +47,8 @@ export default function Home() {
             </div>
           </div>
           <div className="home-hero__foot">
-            <span>SCROLL ↓</span>
-            <span>RESUME · WRITING · WORKS</span>
+            <span>向下阅读 ↓</span>
+            <span>简历 · 文章 · 作品</span>
           </div>
         </Container>
       </section>
@@ -61,7 +61,7 @@ export default function Home() {
               先把复杂问题说清楚，再把它做成容易使用、方便维护的产品。
             </p>
             <div className="profile-grid__details">
-              <p>{resume.identity.summary}</p>
+              <p className="meta-label">WORKING PRINCIPLES / 工作方式</p>
               <ol className="principle-list">
                 {resume.principles.map((principle, index) => (
                   <li key={principle}>
@@ -137,10 +137,13 @@ export default function Home() {
         <Container>
           <SectionHeading
             index="05"
-            label="SKILLS / EDUCATION"
-            title="能力与教育"
+            label={education.length ? "SKILLS / EDUCATION" : "SKILLS"}
+            title={education.length ? "能力与教育" : "能力"}
           />
-          <div className="skills-grid" id="skills-heading">
+          <div
+            className={`skills-grid${education.length ? "" : " skills-grid--single"}`}
+            id="skills-heading"
+          >
             <div className="skills-list">
               {resume.skills.map((group) => (
                 <div key={group.label}>
@@ -149,20 +152,18 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div className="education-block">
-              <p className="meta-label">EDUCATION</p>
-              {education.length ? (
-                education.map((entry) => (
+            {education.length ? (
+              <div className="education-block">
+                <p className="meta-label">EDUCATION</p>
+                {education.map((entry) => (
                   <div key={`${entry.period}-${entry.institution}`}>
                     <p>{entry.institution}</p>
                     <p>{entry.program}</p>
                     <span>{entry.period}</span>
                   </div>
-                ))
-              ) : (
-                <p>教育经历尚未公开；确认后的信息会统一在这里维护。</p>
-              )}
-            </div>
+                ))}
+              </div>
+            ) : null}
           </div>
         </Container>
       </section>
