@@ -9,7 +9,7 @@
     "predev": "pnpm content:generate",
     "dev": "next dev",
     "prebuild": "pnpm content:generate",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

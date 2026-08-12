@@ -11,15 +11,12 @@ type ArticleListProps = {
 export function ArticleList({ articles, compact = false }: ArticleListProps) {
   return (
     <ol className="content-index" data-compact={compact || undefined}>
-      {articles.map((article, index) => (
+      {articles.map((article) => (
         <li key={article.slug}>
           <Link
             className="content-index__row article-row"
             href={`/articles/${article.slug}`}
           >
-            <span className="content-index__number">
-              {String(index + 1).padStart(2, "0")}
-            </span>
             <time dateTime={article.date}>
               {formatCompactDate(article.date)}
             </time>

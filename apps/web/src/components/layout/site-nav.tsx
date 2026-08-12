@@ -4,9 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const navItems = [
-  { href: "/", label: "首页", index: "01" },
-  { href: "/articles", label: "文章", index: "02" },
-  { href: "/works", label: "作品", index: "03" },
+  { href: "/", label: "首页" },
+  { href: "/articles", label: "文章" },
+  { href: "/works", label: "作品" },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
@@ -29,7 +29,6 @@ export function SiteNav() {
             href={item.href}
             key={item.href}
           >
-            <span className="site-nav__index">{item.index}</span>
             <span>{item.label}</span>
           </Link>
         );

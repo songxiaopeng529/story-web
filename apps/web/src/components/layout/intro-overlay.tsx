@@ -26,8 +26,8 @@ export function IntroOverlay({ name }: { name: string }) {
 
       window.sessionStorage.setItem(storageKey, "true");
       setPhase("playing");
-      closingTimer = window.setTimeout(() => setPhase("closing"), 980);
-      finishTimer = window.setTimeout(finish, 1420);
+      closingTimer = window.setTimeout(() => setPhase("closing"), 650);
+      finishTimer = window.setTimeout(finish, 970);
     }, 0);
 
     return () => {
@@ -57,12 +57,12 @@ export function IntroOverlay({ name }: { name: string }) {
         跳过 <span aria-hidden="true">ESC</span>
       </button>
       <div className="intro-overlay__content">
-        <p>PORTFOLIO / 2026</p>
+        <p>PERSONAL ARCHIVE / 2026</p>
         <div className="intro-overlay__name-mask">
           <p className="intro-overlay__name">{name}</p>
         </div>
         <span className="intro-overlay__line" />
-        <p className="intro-overlay__note">RESUME · WRITING · WORKS</p>
+        <p className="intro-overlay__note">简历 · 文章 · 作品</p>
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 # story-web 技术方案（V1）
 
-> 状态：Monorepo 与 Web 工程骨架已初始化，待进入内容系统与页面实现  
-> 更新日期：2026-08-04
+> 状态：Monorepo、内容系统与 Web V1 已实现，进入真实内容完善阶段
+> 更新日期：2026-08-06
 
 ## 1. 项目概述
 
@@ -115,30 +115,32 @@ flowchart LR
 - ESLint + Prettier
 - Node.js 22.18+，pnpm 版本通过 `packageManager` 与 Corepack 固定
 
+生产构建暂时显式使用 Next.js 的 webpack 路径。当前依赖组合中，默认 Turbopack 在无缓存优化编译阶段出现过长时间停滞，而相同代码使用 webpack 可以稳定完成编译、类型检查和 14 个静态路由生成；待后续 Next.js 或 Excalidraw 升级时再单独复测并移除该兼容设置。
+
 不在方案文档中长期写死依赖小版本；以 `package.json` 和 `pnpm-lock.yaml` 为实际版本依据，依赖升级通过独立 PR 完成。
 
 ### 6.2 UI 与视觉
 
-- Tailwind CSS：布局、响应式和常用视觉样式。
-- `@tailwindcss/typography`：提供文章排版基线，再通过 CSS Variables 覆盖为项目风格。
+- Tailwind CSS：基础构建能力；页面视觉通过语义化 CSS Variables 与组件类维护。
 - CSS Variables：维护颜色、间距、边框、字体和动效时长等少量令牌。
-- `next/font`：字体文件随站点自托管，浏览器不依赖 Google Fonts 或第三方字体 CDN。
-- Motion for React：只用于开屏和确实需要时间线编排的过渡；普通 hover、淡入和位移优先使用 CSS。
+- 字体：V1 使用系统无衬线、宋体和等宽字体栈，避免中文 Web Font 的巨大体积；未来出现明确品牌字体时再通过 `next/font/local` 自托管。
+- 动效：当前全部使用 CSS；只有未来出现无法由 CSS 清晰表达的复杂时间线时才考虑 Motion for React。
 
-建议的视觉令牌保持克制：
+视觉采用「Flexoki Editorial」：暖白纸张、深墨正文与单一弱蓝强调色。完整调研、许可证筛查、组件规则和无障碍验收线见 [视觉调研与设计规范](./design-research.md)。核心令牌为：
 
 ```css
 :root {
-  --background: #f7f7f5;
-  --foreground: #111111;
-  --muted: #6f6f6b;
-  --line: #d8d8d2;
-  --surface: #ffffff;
-  --selection: #111111;
+  --canvas: #fffcf0;
+  --paper: #f2f0e5;
+  --ink: #100f0f;
+  --muted: #6f6e69;
+  --line: #cecdc3;
+  --line-strong: #878580;
+  --accent: #205ea6;
 }
 ```
 
-是否提供手动深浅色切换不影响底层方案。V1 可以先跟随系统偏好，所有组件均只消费语义化变量，不直接散落硬编码颜色。
+V1 只提供经过完整验证的浅色模式；暗色模式不是无障碍要求，出现真实需求后再增加并重新验证所有对比度。所有组件只消费语义化变量，不散落主题颜色。
 
 ### 6.3 Markdown/MDX
 
