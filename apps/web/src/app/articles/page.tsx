@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { ArticleList } from "@/components/content/article-list";
 import { ContentPageHeader } from "@/components/content/content-page-header";
+import { CatNap } from "@/components/hero/cat-nap";
 import { Container } from "@/components/ui/container";
 import { getArticles } from "@/lib/content";
 
@@ -16,6 +17,7 @@ export default function ArticlesPage() {
 
   return (
     <main data-page="articles" id="main-content">
+      <CatNap />
       <ContentPageHeader
         count={articles.length}
         description="记录产品、设计与工程中的方法、取舍和仍在形成的答案。"
