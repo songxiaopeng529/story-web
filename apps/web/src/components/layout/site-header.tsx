@@ -14,7 +14,8 @@ export function SiteHeader() {
           className="site-wordmark"
           href="/"
         >
-          {siteConfig.name}
+          <span aria-hidden="true">SXP.</span>
+          <span className="sr-only">{siteConfig.name}</span>
         </Link>
         <SiteNav />
       </Container>

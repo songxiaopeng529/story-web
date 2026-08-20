@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>温馨书房 SVG 预览</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        min-height: 100%;
+      }
+
+      body {
+        display: flex;
+        min-height: 100svh;
+        margin: 0;
+        align-items: flex-end;
+        justify-content: center;
+        overflow-x: hidden;
+        background: #fff;
+        color: #171717;
+        font-family:
+          "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif;
+      }
+
+      main {
+        width: min(100%, 1440px);
+        padding: 32px clamp(16px, 4vw, 64px) 20px;
+      }
+
+      figure {
+        margin: 0;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        max-height: calc(100svh - 72px);
+        object-fit: contain;
+        object-position: center bottom;
+      }
+
+      figcaption {
+        margin-top: 8px;
+        color: #6b6b6b;
+        font-size: 12px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <figure>
+        <img
+          src="./illustrations/cozy-study-room.svg"
+          alt="少年坐在温馨卧室的书桌前看书和使用电脑，猫趴在桌面陪伴"
+        />
+        <figcaption>COZY STUDY ROOM / MONOLINE SVG</figcaption>
+      </figure>
+    </main>
+  </body>
+</html>
