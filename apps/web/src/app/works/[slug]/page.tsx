@@ -35,7 +35,6 @@ export async function generateMetadata({
       url: pathname,
       title: work.title,
       description: work.description,
-      images: [{ url: "/og.png", width: 1200, height: 630, alt: work.title }],
     },
   };
 }

@@ -18,6 +18,14 @@ export function SiteHeader() {
           <span className="sr-only">{siteConfig.name}</span>
         </Link>
         <SiteNav />
+        <a
+          className="site-header__github"
+          href={siteConfig.github}
+          rel="noreferrer"
+          target="_blank"
+        >
+          GitHub <span aria-hidden="true">↗</span>
+        </a>
       </Container>
     </header>
   );

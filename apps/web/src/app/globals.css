@@ -1718,3 +1718,538 @@ main[data-page="home"] > .home-section:nth-of-type(even) {
     display: none;
   }
 }
+
+/* ===== 首页：暖纸手帐风（旧版，现由末尾 Liquid Glass 首页覆盖） ===== */
+body {
+  padding-top: 7.25rem;
+  background-color: #fbf4e8;
+  background-image:
+    radial-gradient(circle at 18% 12%, rgb(198 154 101 / 9%) 0 1px, transparent 1.2px),
+    radial-gradient(circle at 68% 35%, rgb(198 154 101 / 7%) 0 1px, transparent 1.3px),
+    linear-gradient(115deg, rgb(255 255 255 / 34%), transparent 38%, rgb(198 154 101 / 5%));
+  background-size: 11px 13px, 17px 19px, 100% 100%;
+}
+
+.site-header {
+  top: 1.5rem;
+  right: var(--gutter);
+  left: var(--gutter);
+  width: auto;
+  height: 5.4rem;
+  border: 1px solid rgb(183 151 109 / 18%);
+  border-radius: 1.9rem;
+  background: rgb(255 251 243 / 78%);
+  box-shadow: 0 0.75rem 2.2rem rgb(102 74 41 / 9%);
+}
+
+.site-header__inner {
+  display: grid;
+  grid-template-columns: minmax(10rem, 1fr) auto minmax(10rem, 1fr);
+  max-width: 1260px;
+  padding-inline: clamp(1.35rem, 3vw, 3.25rem);
+}
+
+.site-wordmark {
+  color: #503524;
+  font-family: "Marker Felt", "Bradley Hand", "Comic Sans MS", var(--font-editorial);
+  font-size: clamp(1.35rem, 2vw, 1.75rem);
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transform: rotate(-2deg);
+}
+
+.site-nav {
+  gap: clamp(1.2rem, 3vw, 3.4rem);
+}
+
+.site-nav__link {
+  min-height: 5.35rem;
+  color: #9e8564;
+  font-family: var(--font-editorial);
+  font-size: 1.13rem;
+  font-weight: 700;
+}
+
+.site-nav__link::after {
+  right: 9%;
+  bottom: 0.7rem;
+  left: 9%;
+  height: 2px;
+  border-radius: 999px;
+  background: #5b3a25;
+}
+
+.site-nav__link[aria-current="page"] {
+  color: #533522;
+}
+
+.site-nav__link[aria-current="page"]::after {
+  right: 9%;
+  bottom: 0.7rem;
+  left: 9%;
+  width: auto;
+  height: 2px;
+  border-radius: 999px;
+  background: #5b3a25;
+  transform: none;
+}
+
+.site-header__github {
+  display: inline-flex;
+  min-height: 2.8rem;
+  align-items: center;
+  justify-self: end;
+  align-self: center;
+  gap: 0.4rem;
+  padding: 0.62rem 0.85rem;
+  border: 1px solid rgb(183 151 109 / 17%);
+  border-radius: 1rem;
+  background: rgb(246 235 216 / 68%);
+  color: #74563b;
+  font-size: 0.78rem;
+  font-weight: 650;
+  transition: transform var(--duration-fast) var(--ease-standard), background var(--duration-fast) ease;
+}
+
+.site-header__github:hover,
+.site-header__github:focus-visible {
+  background: #fffaf0;
+  transform: translateY(-2px) rotate(-1deg);
+}
+
+.home-hero {
+  height: auto;
+  min-height: min(52rem, calc(100svh - 7.25rem));
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.home-hero__scene {
+  position: relative;
+  width: min(100%, 78rem);
+  height: clamp(35rem, 56vw, 45rem);
+  margin: 0 auto;
+}
+
+.home-hero .hero-scene {
+  inset: 0.75rem 0 0;
+  overflow: hidden;
+  border-radius: 42% 58% 12% 14% / 9% 9% 6% 7%;
+  filter: saturate(0.88) sepia(0.06);
+  isolation: isolate;
+}
+
+.home-hero .hero-scene::before {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 42% 32%, transparent 26%, rgb(251 244 232 / 24%) 74%, rgb(251 244 232 / 82%) 100%),
+    repeating-linear-gradient(94deg, rgb(116 79 37 / 2.5%) 0 1px, transparent 1px 5px);
+  content: "";
+  pointer-events: none;
+}
+
+.home-hero .hero-art {
+  transform: scale(1.04);
+  transform-origin: center 57%;
+}
+
+.home-hero__doodle {
+  position: absolute;
+  z-index: 3;
+  color: #9d6b40;
+  font-family: "Marker Felt", "Bradley Hand", cursive;
+  font-size: clamp(2.25rem, 5vw, 4rem);
+  line-height: 1;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.home-hero__doodle--left {
+  top: 48%;
+  left: 2%;
+  transform: rotate(-18deg);
+}
+
+.home-hero__doodle--right {
+  top: 28%;
+  right: 2%;
+  transform: rotate(13deg);
+}
+
+.home-journey {
+  padding: 1.5rem 0 clamp(4.5rem, 8vw, 7rem);
+}
+
+.journey-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(2.25rem, 4vw, 4.2rem) clamp(1.4rem, 4.5vw, 5.5rem) clamp(2.75rem, 4vw, 4.1rem);
+  border: 1px solid rgb(176 139 95 / 17%);
+  border-radius: clamp(1.5rem, 3.5vw, 2.8rem);
+  background: rgb(255 252 245 / 72%);
+  box-shadow: 0 1.2rem 2.8rem rgb(96 68 35 / 9%);
+}
+
+.journey-card::after {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgb(146 112 72 / 11%) 0.65px, transparent 0.8px);
+  background-size: 6px 6px;
+  content: "";
+  opacity: 0.27;
+  pointer-events: none;
+}
+
+.journey-card__heading {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9rem;
+  color: #543523;
+}
+
+.journey-card__heading h1 {
+  margin: 0;
+  font-family: "Marker Felt", "Bradley Hand", var(--font-editorial);
+  font-size: clamp(2rem, 3.2vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1.15;
+  text-decoration: underline rgb(211 155 83 / 38%) 0.12em;
+  text-underline-offset: 0.16em;
+  transform: rotate(-1deg);
+}
+
+.journey-card__heading span {
+  color: #ca9458;
+  font-size: 1.25rem;
+  transform: rotate(-20deg);
+}
+
+.journey-list {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  margin: clamp(3rem, 5vw, 4.5rem) 0 0;
+  padding: 0;
+  list-style: none;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.journey-list__item {
+  position: relative;
+  min-height: 10rem;
+  padding: 2.2rem 1rem 0 2.85rem;
+}
+
+.journey-list__line {
+  position: absolute;
+  top: 0.44rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  opacity: 0.68;
+}
+
+.journey-list__point {
+  position: absolute;
+  top: 0;
+  left: -0.16rem;
+  width: 0.9rem;
+  height: 0.9rem;
+  border: 3px solid rgb(255 252 245 / 94%);
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 0 1px currentColor;
+}
+
+.journey-list__date {
+  position: absolute;
+  top: -1.8rem;
+  left: 0;
+  margin: 0;
+  color: currentColor;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+}
+
+.journey-list__mark {
+  position: absolute;
+  top: 1.75rem;
+  left: 0.2rem;
+  margin: 0;
+  color: currentColor;
+  font-family: "Marker Felt", "Bradley Hand", cursive;
+  font-size: 1.55rem;
+  line-height: 1;
+  transform: rotate(-8deg);
+}
+
+.journey-list__item h2 {
+  margin: 0;
+  color: #63432d;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.1rem, 1.5vw, 1.36rem);
+  line-height: 1.35;
+}
+
+.journey-list__item > p:last-child {
+  margin: 0.55rem 0 0;
+  color: #9b836b;
+  font-size: 0.88rem;
+  line-height: 1.75;
+}
+
+.journey-list__item--blue { color: #75b0cf; }
+.journey-list__item--orange { color: #e69a45; }
+.journey-list__item--green { color: #82b95a; }
+.journey-list__item--purple { color: #bd76d5; }
+
+.home-note {
+  padding: clamp(4rem, 8vw, 8rem) 0;
+  border-top: 1px dashed rgb(142 103 66 / 29%);
+}
+
+.home-note__inner {
+  display: grid;
+  align-items: end;
+  gap: clamp(2rem, 8vw, 8rem);
+  grid-template-columns: minmax(0, 0.8fr) minmax(18rem, 0.7fr);
+}
+
+.home-note__eyebrow {
+  margin: 0 0 0.6rem;
+  color: #ba8754;
+  font-family: var(--font-mono);
+  font-size: 0.71rem;
+  letter-spacing: 0.1em;
+}
+
+.home-note__greeting {
+  color: #503524;
+  font-family: "Marker Felt", "Bradley Hand", var(--font-editorial);
+  font-size: clamp(2.7rem, 5.4vw, 5.75rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.home-note__line {
+  max-width: 34rem;
+  margin: 0;
+  color: #7f6854;
+  font-family: var(--font-editorial);
+  font-size: clamp(1.12rem, 1.45vw, 1.35rem);
+  line-height: 1.85;
+}
+
+.home-note__links {
+  margin-top: 1.8rem;
+  gap: 1.75rem;
+}
+
+.site-footer {
+  border-top: 1px dashed rgb(142 103 66 / 29%);
+  background: rgb(255 252 245 / 42%);
+}
+
+@media (max-width: 767px) {
+  body { padding-top: 6.5rem; }
+
+  .site-header {
+    top: 0.75rem;
+    right: 0.8rem;
+    left: 0.8rem;
+    height: 4.7rem;
+    border-radius: 1.45rem;
+  }
+
+  .site-header__inner {
+    display: flex;
+    padding-inline: 1.15rem;
+  }
+
+  .site-wordmark { font-size: 1.16rem; }
+  .site-header__github { display: none; }
+  .site-nav { margin-left: auto; gap: 0.85rem; }
+  .site-nav__link { min-height: 4.7rem; font-size: 0.93rem; }
+
+  .home-hero {
+    min-height: auto;
+  }
+
+  .home-hero__scene {
+    width: 100%;
+    height: clamp(26rem, 102vw, 35rem);
+  }
+
+  .home-hero .hero-scene {
+    inset: 0;
+    border-radius: 32% 58% 8% 8% / 7% 7% 5% 5%;
+  }
+
+  .home-hero .hero-art {
+    width: 126%;
+    margin-left: -13%;
+    transform: scale(1.08);
+  }
+
+  .home-hero__doodle--left { top: 62%; left: 4%; }
+  .home-hero__doodle--right { top: 20%; right: 5%; }
+  .home-journey { padding-top: 1rem; }
+  .journey-card { padding-inline: 1.35rem; }
+  .journey-list { gap: 0; grid-template-columns: 1fr; }
+  .journey-list__item { min-height: 0; padding: 1.7rem 0 1.8rem 3rem; }
+  .journey-list__line { top: 0; left: 0.38rem; width: 2px; height: 100%; }
+  .journey-list__item:last-child .journey-list__line { height: 0.42rem; }
+  .journey-list__point { top: -0.14rem; left: 0; }
+  .journey-list__date { top: 0; left: 3rem; }
+  .journey-list__mark { top: 0.25rem; left: 0.05rem; }
+  .journey-list__item h2 { margin-top: 1.05rem; }
+  .home-note__inner { grid-template-columns: 1fr; }
+}
+
+/* ===== 首页：Liquid Glass / 黑白落地页 ===== */
+body:has(.landing-page) {
+  padding-top: 0;
+  background: #050505;
+  color: #f5f5f3;
+}
+
+body:has(.landing-page) .site-header {
+  top: 0;
+  right: 0;
+  left: 0;
+  width: 100%;
+  height: 5.25rem;
+  border: 0;
+  border-radius: 0;
+  background: linear-gradient(180deg, rgb(5 5 5 / 74%), transparent);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+body:has(.landing-page) .site-header__inner {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) auto minmax(8rem, 1fr);
+  max-width: none;
+  padding-inline: clamp(1.25rem, 3vw, 3.5rem);
+}
+
+body:has(.landing-page) .site-wordmark {
+  color: #f5f5f3;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: -0.08em;
+  transform: none;
+}
+
+body:has(.landing-page) .site-nav {
+  gap: clamp(1.1rem, 3vw, 2.6rem);
+}
+
+body:has(.landing-page) .site-nav__link {
+  min-height: 5.25rem;
+  color: rgb(245 245 243 / 52%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+}
+
+body:has(.landing-page) .site-nav__link:hover,
+body:has(.landing-page) .site-nav__link:focus-visible,
+body:has(.landing-page) .site-nav__link[aria-current="page"] {
+  color: #f5f5f3;
+}
+
+body:has(.landing-page) .site-nav__link::after {
+  right: 0;
+  bottom: 1.05rem;
+  left: 0;
+  height: 1px;
+  background: #f5f5f3;
+}
+
+body:has(.landing-page) .site-header__github {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgb(245 245 243 / 68%);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+body:has(.landing-page) .site-header__github:hover,
+body:has(.landing-page) .site-header__github:focus-visible {
+  background: transparent;
+  color: #f5f5f3;
+  transform: none;
+}
+
+body:has(.landing-page) .site-footer {
+  display: none;
+}
+
+.landing-page {
+  min-height: 100svh;
+}
+
+.landing-stage {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background: #050505;
+  isolation: isolate;
+}
+
+.landing-stage__glass {
+  position: absolute;
+  inset: 0;
+}
+
+.landing-stage__glass > div {
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 767px) {
+  body:has(.landing-page) .site-header {
+    height: 4.5rem;
+  }
+
+  body:has(.landing-page) .site-header__inner {
+    display: flex;
+    padding-inline: 1.25rem;
+  }
+
+  body:has(.landing-page) .site-nav {
+    gap: 1rem;
+  }
+
+  body:has(.landing-page) .site-nav__link {
+    min-height: 4.5rem;
+    font-size: 0.65rem;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landing-stage__glass {
+    opacity: 0.72;
+  }
+}
