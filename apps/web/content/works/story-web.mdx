@@ -43,11 +43,6 @@ story-web 是这个个人网站本身，也是一次关于“如何长期拥有�
 | 画板   | Excalidraw 源文件 | 将空间表达与正文一起纳入版本管理 |
 | 仓库   | pnpm + Turborepo  | 为未来应用与服务保留清晰边界     |
 
-<Whiteboard
-  src="/boards/story-web-content-flow.excalidraw"
-  title="story-web 的内容构建路径"
-/>
-
 ## 设计原则
 
 - **内容先于容器**：文章和作品首先是可独立读取的文件，然后才被页面组织。
@@ -61,7 +56,6 @@ apps/web
 │   ├── articles
 │   ├── works
 │   └── resume.ts
-├── public/boards
 └── src/app
     ├── articles
     └── works

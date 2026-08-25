@@ -39,9 +39,6 @@ export async function generateMetadata({
       publishedTime: article.date,
       modifiedTime: article.updated ?? article.date,
       tags: [...article.tags],
-      images: [
-        { url: "/og.png", width: 1200, height: 630, alt: article.title },
-      ],
     },
   };
 }
