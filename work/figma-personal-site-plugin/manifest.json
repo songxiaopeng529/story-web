@@ -1,0 +1,11 @@
+{
+  "name": "Quiet Personal Website UI",
+  "id": "1537326923617992001",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": ["none"]
+  }
+}

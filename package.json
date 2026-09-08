@@ -1,27 +1,29 @@
 {
   "name": "story-web",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
-  "packageManager": "pnpm@11.13.1",
-  "engines": {
-    "node": ">=22.18.0"
-  },
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "dev": "turbo run dev",
-    "dev:web": "turbo run dev --filter=@story-web/web",
-    "build": "turbo run build",
-    "start:web": "turbo run start --filter=@story-web/web",
-    "lint": "turbo run lint",
-    "typecheck": "turbo run typecheck",
-    "content:generate": "turbo run content:generate",
-    "content:check": "turbo run content:check",
-    "test": "turbo run test",
-    "check": "turbo run content:check lint typecheck test build",
-    "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build",
+    "lint": "eslint src next.config.ts",
+    "typecheck": "tsc --noEmit",
+    "verify:export": "node scripts/verify-export.mjs"
+  },
+  "dependencies": {
+    "gray-matter": "^4.0.3",
+    "next": "16.3.4",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
-    "prettier": "^3.9.6",
-    "turbo": "^2.10.7"
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "eslint": "^9.39.0",
+    "eslint-config-next": "16.3.4",
+    "typescript": "~5.9.3"
   }
 }

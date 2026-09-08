@@ -1,80 +1,34 @@
 # story-web
 
-一个面向长期演进的个人网站 Monorepo，用于展示个人简历、文章与作品。
+面向 GitHub Pages 重构的个人网站，保留首页、文章、作品三个入口。
 
-当前访客站采用 Next.js、Tailwind CSS 和 Markdown/MDX；内容统一通过 GitHub 管理，自由画板使用 Excalidraw 文件承载。未来可以在同一仓库中增加管理后台以及 Go、Java 等独立后端服务，而无需重构现有 Web 应用边界。
+当前分支 `codex/rebuild-nextjs-pages` 从远程 `main` 的 `147fd1c` 创建。
+已初始化根目录 Next.js App Router 应用，目前实现自然档案首页，以及现有文章／作品的静态详情页。尚未创建部署工作流，也没有发布到线上。
 
-## 仓库结构
+## 本地运行
 
-```text
-story-web/
-├── apps/
-│   └── web/          # 当前 Next.js 访客站
-├── packages/         # 未来共享的 JS/TS 包
-├── services/         # 未来 Go/Java 等独立后端服务
-├── docs/             # 架构与项目文档
-├── package.json      # Monorepo 根命令
-├── pnpm-workspace.yaml
-└── turbo.json
+```bash
+pnpm install
+pnpm dev
 ```
 
-边界约定：
+打开 http://127.0.0.1:3000。`pnpm lint`、`pnpm typecheck`、`pnpm build` 分别执行代码检查、类型检查与静态导出。导出目录为 `out/`。
 
-- `apps/` 存放可独立运行和部署的前端或 Node.js 应用。
-- `packages/` 只存放不可独立部署的共享 JavaScript/TypeScript 代码。
-- `services/` 存放未来使用原生工具链构建、独立部署的 Go/Java 服务。
-- 跨语言通信通过 HTTP/RPC/事件和明确契约完成，不跨目录引用服务源码。
+GitHub Pages 项目路径验证：`NEXT_PUBLIC_BASE_PATH=/story-web pnpm build`。本地默认不带路径前缀。
 
-## 本地开发
+## 当前首页：自然档案
 
-要求 Node.js 22.18 或更高版本。仓库通过 Corepack 固定 pnpm 版本。
+- 视觉依据：`docs/design/landing-explorations-2026-09-07/04-living-archive.png`。白底、深绿宋体、紧凑姓名导航与滚动分区。
+- 首屏银杏叶底图轻微模糊；圆形放大镜显示同一张清晰原图并放大 1.85 倍，跟随指针，方向键也可移动，Escape 收起。
+- 使用 Pointer Events 与按需 requestAnimationFrame，不引入 WebGL 或持续空转循环。触摸按住观察、纵向手势正常滚动；减少动态效果时去除缓动，无 JavaScript 时保留清晰原图。
+- 作品区在独立水彩底纹上绘制 SVG 关系图；只有标有真实作品名的节点可点击，其他细枝为装饰。“正在生长的作品”位于图上方。
+- 慢读作为文章入口，下方列表从 `content/articles/` 读取。详情页在构建时生成，表格、代码和原有 Callout 正文均可阅读，不执行任意 MDX JavaScript。
+- Header 首页／文章／作品指向首页相应区块，绿色圆点随滚动更新；详情页有回到对应区块的入口。
+- 旧水墨组件、逐字动画、GSAP 依赖及不再使用的公开墨迹和头像资源已移除；历史设计、原始头像、文章和作品内容保留。
 
-```shell
-corepack pnpm install
-corepack pnpm dev:web
-```
+当前生产资产为 `public/images/natural-leaf.webp`、`natural-wash.webp` 与 `natural-reading.webp`，合计约 773 KiB。原始生成素材与完整提示词保存在 `docs/design/assets/natural-archive/`，不随页面发布。见 [实现方案](docs/design/natural-archive-plan.md) 和 [验收记录](docs/design/natural-archive-verification.md)。
 
-打开 [http://localhost:3000](http://localhost:3000)。
+原有两篇文章、两个作品和个人资料已原样迁移到 `content/`，正文中的历史实现描述尚未更新；它们是内容资料，不是新架构的说明。
+旧实现可以从 Git 历史 `147fd1c` 恢复。未跟踪的 `work/` 本地资料与依赖、构建缓存不属于此次源码清理范围。
 
-## 常用命令
-
-- `corepack pnpm dev:web`：只启动 `apps/web`。
-- `corepack pnpm dev`：启动所有拥有 `dev` 任务的 JS/TS 工作区。
-- `corepack pnpm lint`：运行工作区 lint。
-- `corepack pnpm typecheck`：运行 TypeScript 检查。
-- `corepack pnpm content:check`：校验 Frontmatter、slug、内容资源、站内链接和生成清单。
-- `corepack pnpm build`：按依赖图构建工作区。
-- `corepack pnpm check`：统一运行 lint、类型检查、测试和构建。
-- `corepack pnpm format`：格式化仓库内支持的文本文件。
-
-## 内容管理
-
-V1 的文章与作品保存在 `apps/web/content`，与代码一同提交 GitHub。内容在构建期完成校验与页面生成，生产页面不在运行时请求 GitHub API。
-
-未来如果管理后台成为第二个真实消费者，可以将共享 schema 和内容 API 契约抽取到 `packages/` 或仓库级 `contracts/`；原始 Markdown 是否迁入数据库则作为独立演进决策。
-
-## 部署
-
-- GitHub Pull Request：触发 Web CI 和 Vercel Preview。
-- `main`：触发 Vercel Production。
-- Vercel Root Directory：`apps/web`。
-- 未来后端服务独立部署到合适的容器或云服务，不与 Web 强制绑定发布。
-
-## 项目文档
-
-- [V1 技术方案](docs/technical-design.md)
-- [Web 应用说明](apps/web/README.md)
-- [后端服务约定](services/README.md)
-
-## 当前状态
-
-- [x] GitHub 仓库初始化
-- [x] V1 技术方案
-- [x] pnpm Workspace + Turborepo Monorepo
-- [x] `apps/web` Next.js 工程骨架
-- [x] Web CI 基础门禁
-- [x] Markdown/MDX 内容系统与构建清单
-- [x] 首页、文章与作品页面
-- [x] Excalidraw 只读画板与按需交互查看
-- [x] RSS、sitemap、robots、JSON-LD 与社交分享图
-- [ ] Vercel 项目连接与生产部署
+新方案见 [技术方案与实施顺序](docs/technical-plan.md)。
