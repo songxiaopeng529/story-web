@@ -1,41 +1,39 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SiteHeader } from "@/components/layout/site-header";
-import { LeafLens } from "@/components/home/leaf-lens";
-import { GardenGraph } from "@/components/home/garden-graph";
+import { PaperCat, JourneyLine, Paw } from "@/components/home/paper-adventure";
+import { ForgePreview } from "@/components/home/forge-preview";
 import { getEntries } from "@/lib/content";
 import { assetPath } from "@/lib/asset-path";
 
 export default function Home() {
-  const articles = getEntries("articles");
-  const works = getEntries("works");
-  return (
-    <div className="home" id="home">
-      <a href="#main" className="skip-link">跳至正文</a>
-      <SiteHeader />
-      <main id="main" tabIndex={-1}>
-        <section className="nature-hero" aria-labelledby="hero-title">
-          <div className="hero-copy"><h1 id="hero-title">把好奇，<br />种进生活。</h1><p>记录思考，打磨作品，让小小的想法慢慢生长。</p></div>
-          <LeafLens />
-        </section>
-        <section id="works" className="garden-section" aria-labelledby="works-title">
-          <div className="section-copy garden-copy"><h3 className="section-title">数字花园</h3><p>用代码连接想法，<br className="desktop-break" />让作品在探索中持续生长。</p><Link className="text-link" href={`/works/${works[0]?.slug || "story-web"}/`}>探索作品 <span aria-hidden="true">→</span></Link></div>
-          <GardenGraph works={works} />
-        </section>
-        <section id="articles" className="reading-section" aria-labelledby="reading-title">
-          <a href="#notes" className="reading-photo-link" aria-label="浏览文章"><Image src={assetPath("/images/natural-reading.webp")} alt="日光洒在阅读器、笔记本与干花上" width={1536} height={1024} sizes="(max-width: 700px) 100vw, 60vw" className="reading-photo" /></a>
-          <div className="section-copy reading-copy"><h2 id="reading-title" className="section-title">慢读</h2><p>在碎片时代，重建专注与理解。<br className="desktop-break" />把思考写下来，也留一点时间给阅读。</p><a className="text-link" href="#notes">翻开文章 <span aria-hidden="true">→</span></a></div>
-        </section>
-        <section id="notes" className="notes-section" aria-labelledby="notes-title">
-          <h2 id="notes-title" className="section-title">拾起一些片刻</h2>
-          <div className="article-list">{articles.map((article, index) => <Link key={article.slug} href={`/articles/${article.slug}/`} className="article-row">
-            <span className={`article-botanical botanical-${index % 2}`} aria-hidden="true"><Image src={assetPath("/images/natural-leaf.webp")} alt="" fill sizes="90px" /></span>
-            <span className="article-summary"><h3>{article.title}</h3><span>{article.description}</span></span>
-            <time dateTime={article.date}>{article.date.replaceAll("-", ".")}</time><span className="article-arrow" aria-hidden="true">→</span>
-          </Link>)}</div>
-        </section>
-      </main>
-      <footer className="site-footer">持续生长，不必着急。</footer>
-    </div>
-  );
+  const articles = getEntries("articles").slice(0, 3);
+  return <div className="home" id="home">
+    <a href="#main" className="skip-link">跳至正文</a>
+    <SiteHeader />
+    <main id="main" className="adventure" tabIndex={-1}>
+      <JourneyLine />
+      <section className="paper-hero" aria-labelledby="hero-title">
+        <div className="paper-copy">
+          <h1 id="hero-title">带着好奇，<br />去做一点有趣的事。</h1>
+          <svg className="hello-wave" viewBox="0 0 90 14" aria-hidden="true"><path d="M2 7 Q9 0 16 7 T30 7 T44 7 T58 7 T72 7 T86 7" /></svg>
+          <p>你好，我是宋小鹏，<br />一个爱写代码、喜欢折腾的创造者。<br />做一些有用、有趣、可持续的小东西。</p>
+          <a href="#articles" className="hero-invitation">往下逛逛 <span aria-hidden="true">↓</span></a>
+        </div>
+        <PaperCat />
+      </section>
+      <section id="articles" className="journey-section journal-section" aria-labelledby="articles-title">
+        <div className="section-heading"><span className="map-pin blue" aria-hidden="true" /><h2 id="articles-title">最近文章</h2><p>把沿途的思考，留在这里。</p></div>
+        <div className="journal-list">{articles.map((article, index) => <Link key={article.slug} href={`/articles/${article.slug}/`} className="journal-row">
+          <div className="journal-image"><Image src={assetPath(`/images/paper/journal-${index % 2 === 0 ? "desk" : "seaside"}.webp`)} alt={index % 2 === 0 ? "窗边的手记与咖啡水彩插画" : "小猫在海边远望的水彩插画"} width={768} height={512} sizes="(max-width: 650px) 85vw, 310px" /></div>
+          <div className="journal-copy"><time dateTime={article.date}>{article.date.replaceAll("-", ".")}</time><h3>{article.title}</h3><p>{article.description}</p><span className="read-link">阅读文章 <span aria-hidden="true">↗</span></span></div>
+        </Link>)}</div>
+      </section>
+      <section id="works" className="journey-section forge-section" aria-labelledby="works-title">
+        <div className="section-heading"><span className="map-pin" aria-hidden="true" /><h2 id="works-title">认真做的小作品</h2><p>不急着做很多，先把一个做好。</p></div>
+        <div className="forge-layout"><div className="forge-copy"><span className="project-mark" aria-hidden="true">sf.</span><h3>Story Forge</h3><p>一个桌面优先的编程 Agent 平台。<br />围绕自研的原生 Agent Runtime，<br />探索人与工具协作的新方式。</p><a className="text-link" href="https://github.com/songxiaopeng529/story-forge">在 GitHub 查看 <span aria-hidden="true">↗</span></a></div><ForgePreview /></div>
+      </section>
+      <footer className="paper-footer"><a href="#home" className="farewell">下次冒险见。<Paw /></a><a href="https://github.com/songxiaopeng529" aria-label="宋小鹏的 GitHub">GitHub <span aria-hidden="true">↗</span></a></footer>
+    </main>
+  </div>;
 }

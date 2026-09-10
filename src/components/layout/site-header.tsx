@@ -18,7 +18,7 @@ export function SiteHeader({ current = "home", landing = true }: { current?: Sec
       const threshold = Math.min(innerHeight * 0.38, 320);
       const articles = document.getElementById("articles");
       const works = document.getElementById("works");
-      setActive(articles && articles.getBoundingClientRect().top <= threshold ? "articles" : works && works.getBoundingClientRect().top <= threshold ? "works" : "home");
+      setActive(works && works.getBoundingClientRect().top <= threshold ? "works" : articles && articles.getBoundingClientRect().top <= threshold ? "articles" : "home");
     };
     const schedule = () => { if (!frame) frame = requestAnimationFrame(update); };
     schedule();
