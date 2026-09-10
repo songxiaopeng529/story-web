@@ -5,12 +5,18 @@ import matter from "gray-matter";
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
 const html = readFileSync("out/index.html", "utf8");
-for (const text of ["把好奇，", "种进生活。", "正在生长的作品", "慢读", "拾起一些片刻", "探索银杏叶脉"]) assert.ok(html.includes(text), `Missing homepage content: ${text}`);
-for (const asset of ["natural-leaf.webp", "natural-wash.webp", "natural-reading.webp"]) {
+const prototype = readFileSync("out/river-prototype/index.html", "utf8");
+for (const text of ["河流生长实验", "文章数量", "作品数量", "12", "painted-creek", "unified-landscape.webp"]) assert.ok(prototype.includes(text), `Missing prototype content: ${text}`);
+assert.ok(prototype.includes("noindex"), "Prototype should not be indexed");
+for (const text of ["带着好奇，", "去做一点有趣的事。", "最近文章", "认真做的小作品", "Story Forge", "项目结构示意"]) assert.ok(html.includes(text), `Missing homepage content: ${text}`);
+assert.ok(html.indexOf('id="articles"') < html.indexOf('id="works"'), "Articles must precede works");
+assert.equal((html.match(/class="forge-layout"/g) || []).length, 1, "Expected one featured project");
+assert.ok(html.includes('href="https://github.com/songxiaopeng529/story-forge"'));
+for (const asset of ["paper/cat-boat.webp", "paper/journal-desk.webp", "paper/journal-seaside.webp"]) {
   assert.ok(html.includes(`${basePath}/images/${asset}`), `Asset has incorrect base path: ${asset}`);
   assert.ok(existsSync(`out/images/${asset}`));
 }
-for (const asset of ["liquid-glass.webp", "ink-gesture.webp", "github-avatar.jpg"]) assert.ok(!existsSync(`public/images/${asset}`), `Old production asset remains: ${asset}`);
+for (const asset of ["natural-leaf.webp", "natural-wash.webp", "natural-reading.webp"]) assert.ok(!existsSync(`public/images/${asset}`), `Old production asset remains: ${asset}`);
 for (const kind of ["articles", "works"]) {
   for (const file of readdirSync(`content/${kind}`).filter(file => /\.mdx?$/.test(file))) {
     const { data } = matter(readFileSync(`content/${kind}/${file}`, "utf8"));
@@ -34,4 +40,4 @@ for (const page of pages) {
     checked++;
   }
 }
-console.log(`Verified natural archive, ${pages.length} pages and ${checked} local references (basePath: ${basePath || "/"}).`);
+console.log(`Verified paper adventure, ${pages.length} pages and ${checked} local references (basePath: ${basePath || "/"}).`);

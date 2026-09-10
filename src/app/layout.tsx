@@ -2,8 +2,8 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "宋小鹏 · 把好奇，种进生活。",
-  description: "记录思考，打磨作品，让小小的想法慢慢生长。宋小鹏的数字花园与慢读空间。",
+  title: "宋小鹏 · 带着好奇，去做一点有趣的事。",
+  description: "一个爱写代码、喜欢折腾的创造者。记录沿途的思考，认真打磨 Story Forge，做一些有用、有趣的小东西。",
 };
 
 export const viewport: Viewport = { themeColor: "#ffffff", colorScheme: "light" };

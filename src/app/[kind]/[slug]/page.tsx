@@ -32,7 +32,7 @@ export default async function EntryPage({ params }: { params: Promise<Params> })
     <a href="#entry" className="skip-link">跳至正文</a>
     <SiteHeader landing={false} current={entry.kind} />
     <main id="entry" className="entry-shell" tabIndex={-1}>
-      <Link className="entry-back" href={`/#${entry.kind}`}>← 回到{entry.kind === "articles" ? "慢读" : "数字花园"}</Link>
+      <Link className="entry-back" href={`/#${entry.kind}`}>← 回到{entry.kind === "articles" ? "最近文章" : "作品"}</Link>
       <header className="entry-header"><h1>{entry.title}</h1><p>{entry.description}</p><div className="entry-meta"><time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>{entry.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
       <div className="entry-body"><Markdown remarkPlugins={[remarkGfm]} components={{
         a: ({ href, children }) => <a href={href?.startsWith("/") ? assetPath(href) : href}>{children}</a>,
