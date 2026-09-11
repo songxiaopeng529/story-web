@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import Markdown from "react-markdown";
+import Markdown, { defaultUrlTransform } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getEntries, type ContentKind } from "@/lib/content";
@@ -34,7 +34,10 @@ export default async function EntryPage({ params }: { params: Promise<Params> })
     <main id="entry" className="entry-shell" tabIndex={-1}>
       <Link className="entry-back" href={`/#${entry.kind}`}>← 回到{entry.kind === "articles" ? "最近文章" : "作品"}</Link>
       <header className="entry-header"><h1>{entry.title}</h1><p>{entry.description}</p><div className="entry-meta"><time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>{entry.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
-      <div className="entry-body"><Markdown remarkPlugins={[remarkGfm]} components={{
+      <div className="entry-body"><Markdown remarkPlugins={[remarkGfm]} urlTransform={(url, key) => {
+        const safeUrl = defaultUrlTransform(url);
+        return key === "src" && safeUrl.startsWith("/") && !safeUrl.startsWith("//") ? assetPath(safeUrl) : safeUrl;
+      }} components={{
         a: ({ href, children }) => <a href={href?.startsWith("/") ? assetPath(href) : href}>{children}</a>,
         table: ({ children }) => <div className="table-scroll"><table>{children}</table></div>,
       }}>{markdown}</Markdown></div>
