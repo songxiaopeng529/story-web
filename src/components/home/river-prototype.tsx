@@ -13,7 +13,8 @@ import { assetPath } from "@/lib/asset-path";
 type Article = { slug: string; title: string; description: string; date: string };
 
 export function RiverPrototype({ articles }: { articles: Article[] }) {
-  const [count, setCount] = useState(2);
+  const [demoCount, setDemoCount] = useState<number | null>(null);
+  const count = demoCount ?? articles.length;
   const [scenic, setScenic] = useState(true);
   const [works, setWorks] = useState(1);
   const [watercolor, setWatercolor] = useState(true);
@@ -25,7 +26,7 @@ export function RiverPrototype({ articles }: { articles: Article[] }) {
     <a href="#main" className="skip-link">跳至正文</a><SiteHeader />
     <details className="creek-settings"><summary>河流实验设置</summary><aside className="river-controls" aria-label="河流原型控制">
       <div className="prototype-label"><strong>河流生长实验</strong><Link href="/">回到首页 ↗</Link></div>
-      <div className="count-control" role="group" aria-label="文章数量"><span>文章</span>{[2, 6, 12].map(n => <button type="button" key={n} aria-pressed={count === n} onClick={() => setCount(n)}>{n} 篇</button>)}</div>
+      <div className="count-control" role="group" aria-label="文章数量"><span>文章</span><button type="button" aria-pressed={demoCount === null} onClick={()=>setDemoCount(null)}>全部（{articles.length}）</button>{[2, 6, 12].map(n => <button type="button" key={n} aria-pressed={demoCount === n} onClick={() => setDemoCount(n)}>演示 {n} 篇</button>)}</div>
       <div className="count-control" role="group" aria-label="作品数量"><span>作品</span>{[1, 3].map(n => <button type="button" key={n} aria-pressed={works === n} onClick={() => setWorks(n)}>{n} 个</button>)}</div>
       <div className="count-control" role="group" aria-label="场景版本"><button type="button" aria-pressed={scenic} onClick={()=>setScenic(true)}>山间小溪</button><button type="button" aria-pressed={!scenic} onClick={()=>setScenic(false)}>原版河道</button></div>
       <div className="count-control water-mode" role="group" aria-label="水面效果">{!scenic && <><button type="button" aria-pressed={!watercolor} onClick={()=>setWatercolor(false)}>基础版</button><button type="button" aria-pressed={watercolor} onClick={()=>setWatercolor(true)}>水彩 2.5D</button></>}<button type="button" disabled={!scenic && !watercolor} aria-pressed={paused} onClick={()=>setPaused(value=>!value)}>{paused?"继续水流":"暂停水流"}</button></div>
@@ -37,10 +38,10 @@ export function RiverPrototype({ articles }: { articles: Article[] }) {
         <div className="paper-copy"><h1 id="hero-title">带着好奇，<br />顺着小溪，慢慢探索。</h1><p>{scenic ? "记录思考，打磨作品，让想法自然生长。" : "文章多一点，河流就长一点。试试数量切换，再向下滚动，看看纸船经过哪里。"}</p><a className="hero-invitation" href="#articles">沿溪阅读 <span aria-hidden="true">↓</span></a></div>{!scenic && <PaperCat />}
       </section>
       <section id="articles" className="journey-section journal-section" aria-labelledby="articles-title">
-        <div className="section-heading" data-river-anchor><h2 id="articles-title">最近文章</h2>{count > 2 && <p>增加的条目是演示副本，不会新增真实文章。</p>}</div>
+        <div className="section-heading" data-river-anchor><h2 id="articles-title">最近文章</h2>{demoCount !== null && <p>当前为数量演示，切回“全部”查看真实文章。</p>}</div>
         <div className="journal-list">{shown.map((article, index) => <Link key={`${article.slug}-${index}`} data-river-anchor href={`/articles/${article.slug}/`} className="journal-row">
           <div className="journal-image"><Image src={assetPath(`/images/paper/journal-${index % 2 ? "seaside" : "desk"}.webp`)} alt="" width={900} height={600} sizes="(max-width:650px) 80vw, 310px" /></div>
-          <div className="journal-copy"><span className="prototype-entry-label">{article.demo ? `演示副本 · 第 ${index + 1} 篇` : article.date.replaceAll("-", ".")}</span><h3>{article.title}</h3><p>{article.description}{article.demo && index % 3 === 2 ? " 这一段特意保留更长的摘要，用来验证文字换行、条目高度改变时，河岸是否依然避开正文，并保持自然的转弯节奏。" : ""}</p><span className="read-link">阅读原文 <span aria-hidden="true">↗</span></span></div>
+          <div className="journal-copy">{(article.demo || article.date) && <span className="prototype-entry-label">{article.demo ? `演示副本 · 第 ${index + 1} 篇` : article.date.replaceAll("-", ".")}</span>}<h3>{article.title}</h3><p>{article.description}{article.demo && index % 3 === 2 ? " 这一段特意保留更长的摘要，用来验证文字换行、条目高度改变时，河岸是否依然避开正文，并保持自然的转弯节奏。" : ""}</p><span className="read-link">阅读原文 <span aria-hidden="true">↗</span></span></div>
         </Link>)}</div>
         {!shown.length && <p>暂无文章。河流会继续连接作品区。</p>}
       </section>

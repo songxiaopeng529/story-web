@@ -6,6 +6,8 @@ node_modules/
 dist/
 build/
 out/
+.generated/
+public/_article-assets/
 coverage/
 *.tsbuildinfo
 

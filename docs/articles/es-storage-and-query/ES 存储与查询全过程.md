@@ -1,3 +1,16 @@
+---
+title: "ES 存储与查询全过程：一条数据从进门到被搜到"
+description: "用六张流程图串起 Elasticsearch 的写入、refresh、flush、merge 与两阶段查询，理解一条数据从进入分片到被搜索到的全过程。"
+date: "2026-09-10"
+tags:
+  - Elasticsearch
+  - Lucene
+  - 存储与检索
+published: true
+featured: true
+kind: article
+---
+
 # ES 存储与查询全过程：一条数据从进门到被搜到
 
 > **📌 四句话先立住主线**

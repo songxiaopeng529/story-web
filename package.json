@@ -7,7 +7,8 @@
     "dev": "next dev --hostname 127.0.0.1",
     "build": "next build",
     "lint": "eslint src next.config.ts",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node scripts/prepare-articles.mjs && tsc --noEmit",
+    "test:articles": "node --test scripts/article-source.test.mjs",
     "verify:export": "node scripts/verify-export.mjs"
   },
   "dependencies": {

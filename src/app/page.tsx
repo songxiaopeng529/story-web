@@ -7,7 +7,7 @@ import { getEntries } from "@/lib/content";
 import { assetPath } from "@/lib/asset-path";
 
 export default function Home() {
-  const articles = getEntries("articles").slice(0, 3);
+  const articles = getEntries("articles");
   return <div className="home" id="home">
     <a href="#main" className="skip-link">跳至正文</a>
     <SiteHeader />
@@ -26,7 +26,7 @@ export default function Home() {
         <div className="section-heading"><span className="map-pin blue" aria-hidden="true" /><h2 id="articles-title">最近文章</h2><p>把沿途的思考，留在这里。</p></div>
         <div className="journal-list">{articles.map((article, index) => <Link key={article.slug} href={`/articles/${article.slug}/`} className="journal-row">
           <div className="journal-image"><Image src={assetPath(`/images/paper/journal-${index % 2 === 0 ? "desk" : "seaside"}.webp`)} alt={index % 2 === 0 ? "窗边的手记与咖啡水彩插画" : "小猫在海边远望的水彩插画"} width={768} height={512} sizes="(max-width: 650px) 85vw, 310px" /></div>
-          <div className="journal-copy"><time dateTime={article.date}>{article.date.replaceAll("-", ".")}</time><h3>{article.title}</h3><p>{article.description}</p><span className="read-link">阅读文章 <span aria-hidden="true">↗</span></span></div>
+          <div className="journal-copy">{article.date && <time dateTime={article.date}>{article.date.replaceAll("-", ".")}</time>}<h3>{article.title}</h3><p>{article.description}</p><span className="read-link">阅读文章 <span aria-hidden="true">↗</span></span></div>
         </Link>)}</div>
       </section>
       <section id="works" className="journey-section forge-section" aria-labelledby="works-title">
