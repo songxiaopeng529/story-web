@@ -6,6 +6,7 @@ import remarkGfm from "remark-gfm";
 import { SiteHeader } from "@/components/layout/site-header";
 import { getEntries, type ContentKind } from "@/lib/content";
 import { assetPath } from "@/lib/asset-path";
+import { articleUrl } from "@/lib/article-url";
 
 type Params = { kind: string; slug: string };
 const kinds: ContentKind[] = ["articles", "works"];
@@ -33,10 +34,13 @@ export default async function EntryPage({ params }: { params: Promise<Params> })
     <SiteHeader landing={false} current={entry.kind} />
     <main id="entry" className="entry-shell" tabIndex={-1}>
       <Link className="entry-back" href={`/#${entry.kind}`}>← 回到{entry.kind === "articles" ? "最近文章" : "作品"}</Link>
-      <header className="entry-header"><h1>{entry.title}</h1><p>{entry.description}</p><div className="entry-meta"><time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>{entry.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
+      <header className="entry-header"><h1>{entry.title}</h1><p>{entry.description}</p><div className="entry-meta">{entry.date && <time dateTime={entry.date}>{entry.date.replaceAll("-", ".")}</time>}{entry.tags.map(tag => <span key={tag}>{tag}</span>)}</div></header>
       <div className="entry-body"><Markdown remarkPlugins={[remarkGfm]} urlTransform={(url, key) => {
         const safeUrl = defaultUrlTransform(url);
-        return key === "src" && safeUrl.startsWith("/") && !safeUrl.startsWith("//") ? assetPath(safeUrl) : safeUrl;
+        if (key !== "src") return safeUrl;
+        const resolved = entry.kind === "articles" ? articleUrl(safeUrl, entry.slug, entry.assets || []) : safeUrl;
+        if (safeUrl && !resolved) throw new Error(`文章 ${entry.slug} 的图片不存在或路径不受支持：${safeUrl}`);
+        return resolved.startsWith("/") && !resolved.startsWith("//") ? assetPath(resolved) : resolved;
       }} components={{
         a: ({ href, children }) => <a href={href?.startsWith("/") ? assetPath(href) : href}>{children}</a>,
         table: ({ children }) => <div className="table-scroll"><table>{children}</table></div>,

@@ -3,13 +3,15 @@ import { cache } from "react";
 import { readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import articles from "../../.generated/articles.json";
 
 export type ContentKind = "articles" | "works";
 export type ContentEntry = {
   slug: string; kind: ContentKind; title: string; description: string; date: string;
-  tags: string[]; body: string; repository?: string;
+  tags: string[]; body: string; repository?: string; assets?: string[];
 };
 export const getEntries = cache((kind: ContentKind): ContentEntry[] => {
+  if (kind === "articles") return articles.map(article => ({ ...article, kind: "articles" as const }));
   const directory = path.join(process.cwd(), "content", kind);
   return readdirSync(directory).filter(file => /\.mdx?$/.test(file)).flatMap(file => {
     const { data, content } = matter(readFileSync(path.join(directory, file), "utf8"));
