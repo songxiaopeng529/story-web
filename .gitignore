@@ -36,3 +36,5 @@ pnpm-debug.log*
 
 # Go
 vendor/
+
+apps/web/public/article-assets/

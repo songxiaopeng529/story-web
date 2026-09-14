@@ -1,0 +1,50 @@
+[
+  {
+    "slug": "story-forge",
+    "title": "StoryForge",
+    "published": true,
+    "repository": "https://github.com/songxiaopeng529/story-forge",
+    "tags": ["Agent Runtime", "Electron", "TypeScript"],
+    "description": {
+      "zh": "围绕自研原生 Agent Runtime 构建的桌面优先编程 Agent 平台，探索人与智能工具协作的新方式。",
+      "en": "A desktop-first coding agent platform built around a self-authored native Agent Runtime."
+    },
+    "cover": {
+      "theme": "ember",
+      "kicker": { "zh": "桌面优先的编程 Agent", "en": "A desktop-first coding agent" },
+      "headline": { "zh": "StoryForge", "en": "StoryForge" },
+      "caption": { "zh": "从原生运行时开始构建。", "en": "Built around a native runtime." },
+      "mark": "sf."
+    },
+    "features": [
+      { "zh": "自研原生 Agent Runtime 与类型化运行时事件。", "en": "A self-authored native Agent Runtime with typed runtime events." },
+      { "zh": "模型网关提供模型服务商契约与 OpenAI 兼容接口。", "en": "A model gateway with provider contracts and an OpenAI-compatible provider." },
+      { "zh": "工具注册表与工作区沙箱，以及记忆、技能和 MCP 模块。", "en": "A tool registry and workspace sandbox, with memory, skills, and MCP modules." },
+      { "zh": "基于 Electron 的桌面应用。", "en": "An Electron desktop application." }
+    ]
+  },
+  {
+    "slug": "clipboard",
+    "title": "Clipboard",
+    "published": true,
+    "repository": "https://github.com/songxiaopeng529/clipboard",
+    "tags": ["Electron", "React", "TypeScript"],
+    "description": {
+      "zh": "桌面剪贴板管理器，自动记录文本和图片，通过快捷键、搜索与键盘导航，找回并复用复制过的内容。",
+      "en": "A desktop clipboard manager that captures text and images, with a global shortcut, search, and keyboard navigation to reuse copied content."
+    },
+    "cover": {
+      "theme": "paper",
+      "kicker": { "zh": "让复制过的内容随时可用", "en": "Keep what you copy within reach" },
+      "headline": { "zh": "Clipboard", "en": "Clipboard" },
+      "caption": { "zh": "复制、找回、再次使用。", "en": "Copy. Find. Reuse." },
+      "mark": "⌘ V"
+    },
+    "features": [
+      { "zh": "后台监听文本与图片剪贴板，并在本地持久保存。", "en": "Background capture of text and images with local persistence." },
+      { "zh": "Cmd/Ctrl + Shift + V 唤起悬浮选择器，支持方向键和数字键操作。", "en": "Open the floating picker with Cmd/Ctrl + Shift + V, then navigate with arrow or number keys." },
+      { "zh": "根据使用频率与最近使用情况排序，并支持搜索、置顶和删除。", "en": "Rank items by frequency and recency, with search, pinning, and deletion." },
+      { "zh": "提供系统托盘菜单；macOS 自动粘贴需要辅助功能权限。", "en": "Includes a system tray menu. Automatic pasting on macOS requires Accessibility permission." }
+    ]
+  }
+]

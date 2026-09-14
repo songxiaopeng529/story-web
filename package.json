@@ -4,11 +4,10 @@
   "private": true,
   "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build",
-    "lint": "eslint src next.config.ts",
-    "typecheck": "node scripts/prepare-articles.mjs && tsc --noEmit",
-    "test:articles": "node --test scripts/article-source.test.mjs",
+    "dev": "next dev apps/web --hostname 127.0.0.1",
+    "build": "next build apps/web",
+    "lint": "eslint apps/web/src apps/web/next.config.mjs",
+    "typecheck": "node --input-type=module -e \"import {generateSiteContent} from './scripts/site-content.mjs'; generateSiteContent()\" && tsc --noEmit -p apps/web/tsconfig.json",
     "verify:export": "node scripts/verify-export.mjs"
   },
   "dependencies": {

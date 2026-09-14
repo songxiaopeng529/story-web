@@ -1,0 +1,17 @@
+sequenceDiagram
+    participant P as Producer 生产者
+    participant N as NameServer 路由中心
+    participant B as Broker 存储服务器
+    participant C as Consumer 消费者
+    P->>N: ① 我要发 order_event，该找哪台机器？
+    N-->>P: ② 返回 Broker 地址 + 分区列表
+    Note over P: ③ 按 Key 算分区，同一个订单号永远进同一条流水线
+    P->>B: ④ 发送消息（Topic + Tag + Key + Body）
+    Note over B: ⑤ 顺序写进磁盘，再复制一份到备份机
+    B-->>P: ⑥ 回一句 SendOK，这时才算真的发成功
+    C->>B: ⑦ 我是 A 组，从 offset=2 开始拉给我
+    B-->>C: ⑧ 返回一小批消息（比如 32 条）
+    Note over C: ⑨ 执行业务：扣库存 / 发短信 / 记账
+    C->>B: ⑩ 业务成功后才提交 offset=5（ACK）
+    Note over B,C: 没提交位点就重启，会从 offset=2 重来
+    Note over B,C: 所以消息可能重复，消费逻辑必须幂等

@@ -1,66 +1,51 @@
-# story-web
+# Story
 
-面向 GitHub Pages 的 Next.js 个人网站，保留首页、文章、作品三个入口。
+当前唯一正式实现位于 `apps/web`，首页为 `/`。采用已确认的 Story 视觉与模特视频，滚动控制人物转头；导航为 Home、Blog、Project，保留 Contact。
 
-## 本地运行
+## 运行与检查
+
+在仓库根目录执行：
 
 ```bash
 pnpm install
 pnpm dev
+pnpm lint
+pnpm typecheck
+pnpm build
+pnpm verify:export
 ```
 
-打开 http://127.0.0.1:3000。运行 `pnpm lint`、`pnpm typecheck`、`pnpm build` 和 `pnpm verify:export` 检查实现。静态输出位于 `out/`，暂未配置部署工作流。
+本地默认地址为 http://127.0.0.1:3000/，静态产物位于 `apps/web/out/`。
 
-项目路径验证：`NEXT_PUBLIC_BASE_PATH=/story-web pnpm build && NEXT_PUBLIC_BASE_PATH=/story-web pnpm verify:export`。
+子路径部署检查：`NEXT_PUBLIC_BASE_PATH=/story-web pnpm build && NEXT_PUBLIC_BASE_PATH=/story-web pnpm verify:export`。
 
-## 当前首页：纸上冒险
+## 目录
 
-河流生长原型位于 `/river-prototype/`：默认显示全部真实文章，也可切换 2/6/12 篇文章的演示模式、1/3 个作品，演示副本不会写入内容库。河流随真实条目布局增加曲线段，小船沿切线转向。支持基础版与水彩 2.5D 对照、暂停水流；升级版使用 WebGL 流动纹理和船尾波，无 WebGL 时保留静态水彩。正式首页保持不变。
+- `apps/web/src/app`：唯一页面、样式、布局及滚动交互。
+- `apps/web/public`：当前页面使用的四张图片与人物视频。
+- `docs/articles`、`content/projects.json`：博客与作品的内容来源，构建时自动接入。
+- `docs/design/lumenix-model/custom-male`：当前人物的参考图和视频脚本。
 
-以 `docs/design/landing-explorations-2026-09-08/07-paper-adventure.png` 为视觉参考，重新绘制猫咪纸船及文章插画。
+旧首页、minimal、river-prototype、lumenix 试验路由及其闲置素材均已删除。旧实现可通过 Git 历史查看。
 
-- 顺序：猫咪首屏 → 最近文章 → Story Forge → 页脚。
-- 文章唯一来源为 `docs/articles/`，正式首页与河流页默认显示全部文章；可选日期按新到旧排序，无日期的文章按文件夹名排序放在后面。
-- 首页仅展示 Story Forge，内容依据公开项目 README；面板是可切换的结构示意，不是产品截图。
-- SVG 贝塞尔细线随布局尺寸重新计算，小纸船沿线响应滚动；猫咪插画轻微回应鼠标。减少动态效果时停止运动，触屏不拦截滚动。
-- 紧凑导航使用淡杏色手绘色块表示当前区块；文章、作品导航随滚动同步。
-- 旧银杏首页组件与线上图片已移除。历史设计、文章及旧作品详情仍保留，避免破坏内容链接。
-- 静态详情支持 Markdown、表格、代码以及现有 Callout 正文，不执行任意 MDX JavaScript。
+Blog 与 Project 分别滚动至博客和作品区；Contact 下载本地项目简报，不发送消息。
 
-生产图片位于 `public/images/paper/`，三张 WebP 合计约 617 KiB。原始素材与提示词位于 `docs/design/assets/paper-adventure/`。
+## 博客与作品
 
-[设计方案](docs/design/paper-adventure-plan.md) · [技术方案](docs/technical-plan.md)
+首页 Blog 自动读取 `docs/articles/<slug>/` 中的 Markdown/MDX，点击进入 `/articles/<slug>/` 正文预览。每个目录放一篇正文，图片保持 `images/example.png` 这样的相对路径。可选 frontmatter：`title`、`description`、`date`、`tags`、`published`；`published: false` 不会展示。有日期的文章按日期倒序排列，无日期的排在后面。
 
-旧版可从 Git 历史恢复。历史内容中的架构描述不代表当前实现。
+作品集唯一来源为 `content/projects.json`，点击进入 `/works/<slug>/`。正文支持 Markdown、GFM 表格、代码块、图片；不执行 MDX 内的 JavaScript。图片可点击查看原图。首页人物视频保持滚动控制，正文页使用静态深色背景便于阅读。
 
-## 以后如何添加文章
+开发时监听内容目录并更新；静态站部署后需重新构建才能发布新文章。生成数据在 `apps/web/.generated`，图片在 `apps/web/public/article-assets`，均不需要手动维护。
 
-只维护一个目录：`docs/articles/<文章英文短名>/`。每个目录放一个 `.md` 或 `.mdx` 文件（中文文件名也可以）和相关图片，例如：
+## 维护作品 JSON
 
-```text
-docs/articles/hdfs-introduction/
-  HDFS 入门.md
-  images/
-    01-hdfs-layers.png
-```
+编辑 `content/projects.json`，复制一条项目记录即可新增。数组顺序就是展示顺序；`published: false` 可隐藏项目。
 
-正文里保持相对路径：`![示意图](images/01-hdfs-layers.png)`。文件夹名决定网址 `/articles/hdfs-introduction/`，改文件夹名会改变网址。不要往同一个文件夹放多篇 Markdown。
+- `slug`：唯一的小写英文路径，如 `story-forge`。
+- `title`、`repository`、`tags`：项目名、HTTPS 仓库链接、技术标签。
+- `description`：包含 `en` / `zh` 的中英文简介。
+- `cover`：`theme` 为 `ember` 或 `paper`；`kicker`、`headline`、`caption` 为双语文案，`mark` 为短标记。
+- `features`：双语项目介绍条目，自动显示在详情页。
 
-无需填写元数据也能显示：标题取一级标题（没有则取文件名），摘要取首个普通段落。若要指定日期、摘要、标签或隐藏草稿，可在同一份原文顶部选填：
-
-```yaml
----
-date: "2026-09-12"
-description: "这篇文章的简介"
-tags: [HDFS, 存储]
-published: true
----
-```
-
-`published: false` 的文件夹不公开，缺省为公开。不要将私密文档放进 `docs/articles`。`docs/design` 等其他目录不会被读取。
-
-运行 `pnpm dev` / `pnpm build` 时自动从原文生成 `.generated/articles.json` 和 `public/_article-assets/` 图片输出。这两个目录是被 Git 忽略的构建产物，不要手动维护。开发服务会监听新增、修改、删除；刷新浏览器即可查看。已经部署的 GitHub Pages 需要重新构建发布才会更新。
-
-图片支持 PNG、JPEG、WebP、GIF、SVG、AVIF，可放嵌套目录。图片文件夹随原文一起提交即可，不需要复制到 public。当前不把其他类型的附件自动发布。
-
-测试：`pnpm test:articles`。文章入口、全部列表及导出图片由 `pnpm verify:export` 校验。作品仍读取 `content/works/`，不受本次文章迁移影响。
+开发预览会监听 JSON 修改，无需改 React 代码；线上静态站需重新构建部署。构建时会检查必填字段、重复 slug 和链接格式。
