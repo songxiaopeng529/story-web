@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none" role="img" aria-labelledby="title">
-  <title id="title">个人头像占位图</title>
-  <circle cx="18" cy="18" r="16.5" fill="#111111" stroke="#F7F8FA" stroke-width="1"/>
-  <ellipse cx="18" cy="13" rx="5" ry="5.5" stroke="#F7F8FA" stroke-width="1.4"/>
-  <path d="M8.5 28c.9-5.2 4.2-7 9.5-7s8.6 1.8 9.5 7" stroke="#F7F8FA" stroke-width="1.4" stroke-linecap="round"/>
-</svg>
