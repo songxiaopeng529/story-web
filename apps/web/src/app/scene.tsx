@@ -105,7 +105,7 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
           <a href="#story-blog" onClick={() => setMenuOpen(false)}>{t("Blog", "博客")}</a>
           <a href="#story-projects" onClick={() => setMenuOpen(false)}>{t("Project", "作品")}</a>
         </nav>
-        <LanguageToggle className={styles.contactButton} />
+        <LanguageToggle className={styles.languageToggle} />
         <button className={styles.menuButton} aria-expanded={menuOpen} aria-label={menuOpen ? t("Close menu", "关闭菜单") : t("Open menu", "打开菜单")} onClick={() => setMenuOpen(!menuOpen)}>{menuOpen ? t("Close", "关闭") : t("Menu", "菜单")}</button>
       </header>
       <section className={styles.hero} aria-label={t("Story personal site", "Story 个人网站")}>
