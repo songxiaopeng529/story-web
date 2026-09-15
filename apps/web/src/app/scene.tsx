@@ -9,7 +9,7 @@ import { LanguageToggle, useLanguage } from "@/components/language";
 import styles from "./scene.module.css";
 
 const VIDEO_FRAME_RATE = 24;
-
+const VIDEO_FRAME_TOLERANCE = 0.75 / VIDEO_FRAME_RATE;
 
 function Mark({ className = "" }: { className?: string }) {
   return <svg className={className} viewBox="0 0 40 40" fill="none" aria-hidden="true">{Array.from({ length: 12 }, (_, i) => <g key={i} transform={`rotate(${i * 30} 20 20)`}><path d="M18 2h4v7h-4zM18 12h4v4h-4z" fill="currentColor" /></g>)}</svg>;
@@ -26,42 +26,97 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    const el = root.current;
-    const media = video.current;
-    if (!el || !media) return;
+    const rootElement = root.current;
+    const videoElement = video.current;
+    if (!rootElement || !videoElement) return;
+    const el: HTMLElement = rootElement;
+    const media: HTMLVideoElement = videoElement;
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
+    let frameCallback = 0;
     let target = 0;
     let disposed = false;
+    let revealed = false;
+
+    function cancelFrameConfirmation() {
+      const callback = frameCallback;
+      frameCallback = 0;
+      if (callback && typeof media.cancelVideoFrameCallback === "function") media.cancelVideoFrameCallback(callback);
+    }
+
+    function hideVideo() {
+      cancelFrameConfirmation();
+      revealed = false;
+      media.style.opacity = "0";
+    }
+
+    function revealVideo() {
+      if (revealed || motion.matches) return;
+      revealed = true;
+      media.style.opacity = "1";
+    }
 
     function schedule() {
       if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(tick);
     }
+
+    function confirmPresentedFrame() {
+      if (disposed || revealed || motion.matches || media.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || media.seeking) return;
+      if (Math.abs(target - media.currentTime) > VIDEO_FRAME_TOLERANCE) return;
+
+      if (typeof media.requestVideoFrameCallback === "function") {
+        if (frameCallback) return;
+        frameCallback = media.requestVideoFrameCallback((_now, metadata) => {
+          frameCallback = 0;
+          if (Math.abs(target - metadata.mediaTime) <= VIDEO_FRAME_TOLERANCE) revealVideo();
+          schedule();
+        });
+        return;
+      }
+
+      revealVideo();
+    }
+
     function tick() {
       raf = 0;
-      if (!media || media.readyState < 2 || media.seeking) return;
+      if (media.readyState < HTMLMediaElement.HAVE_METADATA || media.seeking) return;
       const difference = target - media.currentTime;
-      if (Math.abs(difference) < 0.5 / VIDEO_FRAME_RATE) return;
-      // Serialize decoder seeks. New scroll input always replaces the target.
-      const next = motion.matches ? 0 : media.currentTime + difference * 0.35;
-      const time = Math.abs(difference) < 2 / VIDEO_FRAME_RATE ? target : next;
-      media.currentTime = Math.max(0, time);
+      if (Math.abs(difference) <= VIDEO_FRAME_TOLERANCE) {
+        confirmPresentedFrame();
+        return;
+      }
+
+      // Keep a single decoder seek in flight, then jump straight to the latest
+      // scroll target. Easing currentTime itself creates a visible seek backlog.
+      cancelFrameConfirmation();
+      media.currentTime = target;
     }
+
     function update() {
-      if (!el || !media) return;
       const progress = Math.max(0, Math.min(1, -el.getBoundingClientRect().top / (window.innerHeight * 2.65)));
       const lastFrameTime = Number.isFinite(media.duration) ? Math.max(0, media.duration - 1 / VIDEO_FRAME_RATE) : 0;
       target = motion.matches ? 0 : Math.round(progress * lastFrameTime * VIDEO_FRAME_RATE) / VIDEO_FRAME_RATE;
       el.style.setProperty("--progress", String(motion.matches ? 0 : progress));
+
+      if (motion.matches) hideVideo();
       schedule();
     }
+
     function ready() {
-      if (!media) return;
-      media.style.opacity = "1";
       update();
+      // The poster and frame zero are visually equivalent. Reveal immediately
+      // when they already match; scrolled targets still wait for a decoded frame.
+      if (!media.seeking && Math.abs(target - media.currentTime) <= VIDEO_FRAME_TOLERANCE) revealVideo();
+      else confirmPresentedFrame();
     }
-    function seeked() { schedule(); }
-    function failed() { if (media) media.style.opacity = "0"; }
+
+    function seeked() {
+      confirmPresentedFrame();
+      schedule();
+    }
+
+    function failed() { hideVideo(); }
+    media.addEventListener("loadedmetadata", update);
     media.addEventListener("loadeddata", ready);
     media.addEventListener("seeked", seeked);
     media.addEventListener("error", failed);
@@ -69,11 +124,13 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
     window.addEventListener("resize", update);
     document.addEventListener("visibilitychange", update);
     motion.addEventListener("change", update);
-    if (media.readyState >= 2) ready();
+    if (media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) ready();
     else update();
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
+      cancelFrameConfirmation();
+      media.removeEventListener("loadedmetadata", update);
       media.removeEventListener("loadeddata", ready);
       media.removeEventListener("seeked", seeked);
       media.removeEventListener("error", failed);
@@ -94,7 +151,10 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
     <a className={styles.skip} href="#story-blog">{t("Skip to content", "跳至正文")}</a>
     <div className={styles.backdrop} aria-hidden="true">
       <Image src={assetPath("/images/story/model-poster.jpg")} alt="" width={1920} height={1080} priority sizes="100vw" className={styles.poster} />
-      <video ref={video} className={styles.canvas} src={assetPath("/videos/story/model-turn.mp4")} poster={assetPath("/images/story/model-poster.jpg")} preload="auto" muted playsInline disablePictureInPicture aria-hidden="true" />
+      <video ref={video} className={styles.canvas} poster={assetPath("/images/story/model-poster.jpg")} preload="auto" muted playsInline disablePictureInPicture aria-hidden="true">
+        <source media="(max-width: 650px)" src={assetPath("/videos/story/model-turn-mobile.mp4")} type="video/mp4" />
+        <source src={assetPath("/videos/story/model-turn.mp4")} type="video/mp4" />
+      </video>
       <div className={styles.shade} />
     </div>
     <div className={styles.foreground}>
