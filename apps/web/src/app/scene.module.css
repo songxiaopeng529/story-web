@@ -50,3 +50,16 @@
 .services .identity{cursor:default}.services .identity:hover{background:none}
 
 .workCover strong.projectHeadline{font-size:clamp(32px,4.5vw,68px);overflow-wrap:anywhere}.workCover strong.projectHeadline>span{line-height:1.5}@media(max-width:650px){.workCover strong.projectHeadline{font-size:48px}}
+
+/* Keep locale selection in the header's utility layer rather than styling it as a CTA. */
+.header{gap:24px}
+.languageToggle{display:inline-flex;align-items:center;justify-content:center;min-width:64px;min-height:44px;padding:10px 8px;border:0;border-radius:4px;background:transparent;color:#fffdfbe6;font-family:inherit;font-size:13px;font-weight:500;line-height:1;letter-spacing:.01em;white-space:nowrap;cursor:pointer;transition:color .12s ease-out}
+.languageToggle:hover{color:var(--white)}
+.languageToggle:active{color:#fffdfbb3}
+.languageToggle:focus-visible{outline-offset:3px}
+@media(max-width:950px){.header{gap:22px}.languageToggle{min-width:60px;font-size:12px}}
+@media(max-width:650px){.header{gap:14px}.languageToggle{margin-left:auto;min-width:58px;min-height:44px;padding:10px 6px;font-size:12px}}
+
+/* Keep the role index inside the portrait's negative space instead of running rules into the face. */
+.services{width:clamp(240px,28vw,520px)}
+@media(max-width:650px){.services{width:52%}}
