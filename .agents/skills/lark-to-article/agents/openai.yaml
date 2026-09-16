@@ -1,0 +1,6 @@
+interface:
+  display_name: "飞书文档转网站文章"
+  short_description: "将飞书文档导入 docs/articles，图片自动裁剪并保留四周 30px"
+  default_prompt: "使用 $lark-to-article 将这篇飞书文档转为网站文章，输出到 docs/articles，图片四周留白 30px。"
+policy:
+  allow_implicit_invocation: true
