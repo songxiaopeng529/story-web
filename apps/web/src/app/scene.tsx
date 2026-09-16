@@ -10,6 +10,12 @@ import styles from "./scene.module.css";
 
 const VIDEO_FRAME_RATE = 24;
 const VIDEO_FRAME_TOLERANCE = 0.75 / VIDEO_FRAME_RATE;
+const SCROLL_RANGE_VIEWPORTS = 2.65;
+const SPRITE_COLUMNS = 4;
+const SPRITE_ROWS = 4;
+const SPRITE_FRAME_COUNT = SPRITE_COLUMNS * SPRITE_ROWS;
+const SPRITE_END_TIME = 2.25;
+const VIDEO_STARTUP_BUFFER_END = SPRITE_END_TIME + 0.25;
 
 function Mark({ className = "" }: { className?: string }) {
   return <svg className={className} viewBox="0 0 40 40" fill="none" aria-hidden="true">{Array.from({ length: 12 }, (_, i) => <g key={i} transform={`rotate(${i * 30} 20 20)`}><path d="M18 2h4v7h-4zM18 12h4v4h-4z" fill="currentColor" /></g>)}</svg>;
@@ -20,6 +26,8 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
   const services = [t("Developer", "开发者"), t("Writer", "写作者"), t("Creator", "创作者"), t("AI Builder", "AI 构建者")];
   const root = useRef<HTMLElement>(null);
   const video = useRef<HTMLVideoElement>(null);
+  const sprite = useRef<HTMLImageElement>(null);
+  const spriteCanvas = useRef<HTMLCanvasElement>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const [modal, setModal] = useState<"contact" | null>(null);
@@ -28,49 +36,187 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
   useEffect(() => {
     const rootElement = root.current;
     const videoElement = video.current;
-    if (!rootElement || !videoElement) return;
+    const spriteElement = sprite.current;
+    const spriteCanvasElement = spriteCanvas.current;
+    if (!rootElement || !videoElement || !spriteElement || !spriteCanvasElement) return;
     const el: HTMLElement = rootElement;
     const media: HTMLVideoElement = videoElement;
+    const spriteImage: HTMLImageElement = spriteElement;
+    const canvas: HTMLCanvasElement = spriteCanvasElement;
     const motion = window.matchMedia("(prefers-reduced-motion: reduce)");
     let raf = 0;
     let frameCallback = 0;
+    let frameConfirmationTimer = 0;
+    let handoffTimer = 0;
     let target = 0;
+    let spriteFrame = 0;
+    let lastDrawnSpriteFrame = -1;
+    let lastCanvasWidth = 0;
+    let lastCanvasHeight = 0;
     let disposed = false;
     let revealed = false;
+    let spriteReady = spriteImage.complete && spriteImage.naturalWidth > 0;
+    let spriteUnavailable = spriteImage.complete && spriteImage.naturalWidth === 0;
+    let readyForSeeking = false;
+    let priming = false;
+    let playbackBlocked = false;
+    let videoLoadStarted = media.preload !== "none";
 
     function cancelFrameConfirmation() {
       const callback = frameCallback;
       frameCallback = 0;
+      window.clearTimeout(frameConfirmationTimer);
+      frameConfirmationTimer = 0;
       if (callback && typeof media.cancelVideoFrameCallback === "function") media.cancelVideoFrameCallback(callback);
     }
 
     function hideVideo() {
       cancelFrameConfirmation();
+      window.clearTimeout(handoffTimer);
       revealed = false;
       media.style.opacity = "0";
+      canvas.style.opacity = spriteReady && !motion.matches ? "1" : "0";
     }
 
     function revealVideo() {
-      if (revealed || motion.matches) return;
+      if (revealed || !readyForSeeking || motion.matches) return;
       revealed = true;
       media.style.opacity = "1";
+      window.clearTimeout(handoffTimer);
+      handoffTimer = window.setTimeout(() => {
+        if (revealed) canvas.style.opacity = "0";
+      }, 160);
     }
 
     function schedule() {
       if (!raf && !disposed && !document.hidden) raf = requestAnimationFrame(tick);
     }
 
+    function startVideoLoad() {
+      if (disposed || videoLoadStarted || motion.matches) return;
+      videoLoadStarted = true;
+      media.preload = "auto";
+      media.load();
+    }
+
+    function drawSprite() {
+      if (!spriteReady || motion.matches) return;
+      const bounds = canvas.getBoundingClientRect();
+      if (bounds.width <= 0 || bounds.height <= 0) return;
+
+      const density = Math.min(window.devicePixelRatio || 1, 1.5);
+      const width = Math.max(1, Math.round(bounds.width * density));
+      const height = Math.max(1, Math.round(bounds.height * density));
+      if (spriteFrame === lastDrawnSpriteFrame && width === lastCanvasWidth && height === lastCanvasHeight) return;
+
+      if (canvas.width !== width) canvas.width = width;
+      if (canvas.height !== height) canvas.height = height;
+      const context = canvas.getContext("2d", { alpha: false });
+      if (!context) return;
+
+      const frameWidth = spriteImage.naturalWidth / SPRITE_COLUMNS;
+      const frameHeight = spriteImage.naturalHeight / SPRITE_ROWS;
+      const destinationRatio = width / height;
+      const frameRatio = frameWidth / frameHeight;
+      let sourceX = 0;
+      let sourceY = 0;
+      let sourceWidth = frameWidth;
+      let sourceHeight = frameHeight;
+
+      // Match object-fit: cover and the portrait's 50% 28% focal point.
+      if (destinationRatio > frameRatio) {
+        sourceHeight = frameWidth / destinationRatio;
+        sourceY = (frameHeight - sourceHeight) * 0.28;
+      } else {
+        sourceWidth = frameHeight * destinationRatio;
+        sourceX = (frameWidth - sourceWidth) * 0.5;
+      }
+
+      const column = spriteFrame % SPRITE_COLUMNS;
+      const row = Math.floor(spriteFrame / SPRITE_COLUMNS);
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
+      context.drawImage(
+        spriteImage,
+        column * frameWidth + sourceX,
+        row * frameHeight + sourceY,
+        sourceWidth,
+        sourceHeight,
+        0,
+        0,
+        width,
+        height,
+      );
+      lastDrawnSpriteFrame = spriteFrame;
+      lastCanvasWidth = width;
+      lastCanvasHeight = height;
+      if (!revealed) canvas.style.opacity = "1";
+    }
+
+    function contiguousBufferedEnd() {
+      for (let index = 0; index < media.buffered.length; index += 1) {
+        if (media.buffered.start(index) <= VIDEO_FRAME_TOLERANCE) return media.buffered.end(index);
+      }
+      return 0;
+    }
+
+    function startPriming() {
+      if (disposed || priming || playbackBlocked || readyForSeeking || motion.matches || media.readyState < HTMLMediaElement.HAVE_CURRENT_DATA) return;
+      priming = true;
+      const playback = media.play();
+      playback?.catch(() => {
+        if (disposed || readyForSeeking) return;
+        priming = false;
+        playbackBlocked = true;
+        // Muted inline playback normally succeeds. If a browser still blocks it,
+        // let ordinary preload finish the startup buffer while the sprite remains live.
+        maybeFinishPriming();
+      });
+    }
+
+    function maybeFinishPriming() {
+      if (disposed || readyForSeeking || motion.matches || media.readyState < HTMLMediaElement.HAVE_METADATA) return;
+      const lastFrameTime = Number.isFinite(media.duration) ? Math.max(0, media.duration - 1 / VIDEO_FRAME_RATE) : VIDEO_STARTUP_BUFFER_END;
+      const requiredEnd = Math.min(lastFrameTime, VIDEO_STARTUP_BUFFER_END);
+      if (contiguousBufferedEnd() + VIDEO_FRAME_TOLERANCE < requiredEnd) {
+        startPriming();
+        return;
+      }
+
+      readyForSeeking = true;
+      priming = false;
+      media.pause();
+      if (!media.seeking && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && Math.abs(target - media.currentTime) <= VIDEO_FRAME_TOLERANCE) {
+        revealVideo();
+      } else {
+        schedule();
+      }
+    }
+
     function confirmPresentedFrame() {
-      if (disposed || revealed || motion.matches || media.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || media.seeking) return;
+      if (disposed || revealed || !readyForSeeking || motion.matches || media.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || media.seeking) return;
       if (Math.abs(target - media.currentTime) > VIDEO_FRAME_TOLERANCE) return;
 
       if (typeof media.requestVideoFrameCallback === "function") {
         if (frameCallback) return;
         frameCallback = media.requestVideoFrameCallback((_now, metadata) => {
           frameCallback = 0;
+          window.clearTimeout(frameConfirmationTimer);
+          frameConfirmationTimer = 0;
           if (Math.abs(target - metadata.mediaTime) <= VIDEO_FRAME_TOLERANCE) revealVideo();
           schedule();
         });
+        // Some engines do not issue a new video-frame callback for an already
+        // presented paused frame. Keep the exact-frame callback as the primary
+        // signal, then fall back only after the media clock is stable.
+        frameConfirmationTimer = window.setTimeout(() => {
+          const callback = frameCallback;
+          frameCallback = 0;
+          frameConfirmationTimer = 0;
+          if (callback && typeof media.cancelVideoFrameCallback === "function") media.cancelVideoFrameCallback(callback);
+          if (!disposed && !media.seeking && media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA && Math.abs(target - media.currentTime) <= VIDEO_FRAME_TOLERANCE) revealVideo();
+          schedule();
+        }, 180);
         return;
       }
 
@@ -79,7 +225,8 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
 
     function tick() {
       raf = 0;
-      if (media.readyState < HTMLMediaElement.HAVE_METADATA || media.seeking) return;
+      drawSprite();
+      if (!readyForSeeking || media.readyState < HTMLMediaElement.HAVE_METADATA || media.seeking) return;
       const difference = target - media.currentTime;
       if (Math.abs(difference) <= VIDEO_FRAME_TOLERANCE) {
         confirmPresentedFrame();
@@ -93,21 +240,27 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
     }
 
     function update() {
-      const progress = Math.max(0, Math.min(1, -el.getBoundingClientRect().top / (window.innerHeight * 2.65)));
+      const progress = Math.max(0, Math.min(1, -el.getBoundingClientRect().top / (window.innerHeight * SCROLL_RANGE_VIEWPORTS)));
       const lastFrameTime = Number.isFinite(media.duration) ? Math.max(0, media.duration - 1 / VIDEO_FRAME_RATE) : 0;
       target = motion.matches ? 0 : Math.round(progress * lastFrameTime * VIDEO_FRAME_RATE) / VIDEO_FRAME_RATE;
+      spriteFrame = motion.matches ? 0 : Math.min(SPRITE_FRAME_COUNT - 1, Math.round(progress * SCROLL_RANGE_VIEWPORTS * (SPRITE_FRAME_COUNT - 1)));
       el.style.setProperty("--progress", String(motion.matches ? 0 : progress));
 
-      if (motion.matches) hideVideo();
+      if (motion.matches) {
+        media.pause();
+        hideVideo();
+        canvas.style.opacity = "0";
+      } else {
+        if (spriteReady || spriteUnavailable) startVideoLoad();
+        maybeFinishPriming();
+      }
       schedule();
     }
 
     function ready() {
       update();
-      // The poster and frame zero are visually equivalent. Reveal immediately
-      // when they already match; scrolled targets still wait for a decoded frame.
-      if (!media.seeking && Math.abs(target - media.currentTime) <= VIDEO_FRAME_TOLERANCE) revealVideo();
-      else confirmPresentedFrame();
+      maybeFinishPriming();
+      startPriming();
     }
 
     function seeked() {
@@ -115,25 +268,55 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
       schedule();
     }
 
-    function failed() { hideVideo(); }
+    function spriteLoaded() {
+      spriteReady = true;
+      spriteUnavailable = false;
+      lastDrawnSpriteFrame = -1;
+      startVideoLoad();
+      schedule();
+    }
+
+    function spriteFailed() {
+      spriteReady = false;
+      spriteUnavailable = true;
+      startVideoLoad();
+    }
+
+    function failed() {
+      priming = false;
+      hideVideo();
+    }
+
     media.addEventListener("loadedmetadata", update);
     media.addEventListener("loadeddata", ready);
+    media.addEventListener("canplay", startPriming);
+    media.addEventListener("progress", maybeFinishPriming);
+    media.addEventListener("timeupdate", maybeFinishPriming);
     media.addEventListener("seeked", seeked);
     media.addEventListener("error", failed);
+    spriteImage.addEventListener("load", spriteLoaded);
+    spriteImage.addEventListener("error", spriteFailed);
     window.addEventListener("scroll", update, { passive: true });
     window.addEventListener("resize", update);
     document.addEventListener("visibilitychange", update);
     motion.addEventListener("change", update);
-    if (media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) ready();
-    else update();
+    if (spriteReady) spriteLoaded();
+    if (media.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) ready(); else update();
     return () => {
       disposed = true;
       cancelAnimationFrame(raf);
       cancelFrameConfirmation();
+      window.clearTimeout(handoffTimer);
+      media.pause();
       media.removeEventListener("loadedmetadata", update);
       media.removeEventListener("loadeddata", ready);
+      media.removeEventListener("canplay", startPriming);
+      media.removeEventListener("progress", maybeFinishPriming);
+      media.removeEventListener("timeupdate", maybeFinishPriming);
       media.removeEventListener("seeked", seeked);
       media.removeEventListener("error", failed);
+      spriteImage.removeEventListener("load", spriteLoaded);
+      spriteImage.removeEventListener("error", spriteFailed);
       window.removeEventListener("scroll", update);
       window.removeEventListener("resize", update);
       document.removeEventListener("visibilitychange", update);
@@ -150,8 +333,10 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
   return <main ref={root} className={styles.page} id="story-top" lang={language === "zh" ? "zh-CN" : "en"}>
     <a className={styles.skip} href="#story-blog">{t("Skip to content", "跳至正文")}</a>
     <div className={styles.backdrop} aria-hidden="true">
-      <Image src={assetPath("/images/story/model-poster.jpg")} alt="" width={1920} height={1080} priority sizes="100vw" className={styles.poster} />
-      <video ref={video} className={styles.canvas} poster={assetPath("/images/story/model-poster.jpg")} preload="auto" muted playsInline disablePictureInPicture aria-hidden="true">
+      <Image src={assetPath("/images/story/model-poster.jpg")} alt="" width={1920} height={1080} preload sizes="100vw" className={styles.poster} />
+      <Image ref={sprite} src={assetPath("/images/story/model-turn-sprite.webp")} alt="" width={3200} height={1800} loading="eager" fetchPriority="high" decoding="async" className={styles.spriteSource} />
+      <canvas ref={spriteCanvas} className={styles.spriteCanvas} />
+      <video ref={video} className={styles.canvas} poster={assetPath("/images/story/model-poster.jpg")} preload="none" muted playsInline disablePictureInPicture aria-hidden="true">
         <source media="(max-width: 650px)" src={assetPath("/videos/story/model-turn-mobile.mp4")} type="video/mp4" />
         <source src={assetPath("/videos/story/model-turn.mp4")} type="video/mp4" />
       </video>
