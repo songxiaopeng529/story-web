@@ -1,0 +1,26 @@
+graph TB
+    subgraph LowLevel["底层 API"]
+        DS[DataStream API
+流处理核心]
+        DSET[DataSet API
+批处理（已逐步废弃）]
+    end
+
+    subgraph HighLevel["高层 API"]
+        TABLE[Table API
+类 SQL 的表操作]
+        SQL[Flink SQL
+标准 SQL]
+        CEP[CEP
+复杂事件处理]
+        Gelly[Gelly
+图计算]
+    end
+
+    DS --> TABLE
+    DSET --> TABLE
+    TABLE --> SQL
+    DS --> CEP
+
+    style LowLevel fill:#ffebee,stroke:#f44336
+    style HighLevel fill:#e8f5e9,stroke:#4caf50

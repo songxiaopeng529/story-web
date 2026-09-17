@@ -1,0 +1,17 @@
+graph TB
+    subgraph Batch["批处理 Batch"]
+        B1[数据已全部就绪] --> B2[一次性处理全部数据]
+        B2 --> B3[输出最终结果]
+        B4[特点：高吞吐、延迟高
+适合：T+1 报表、离线训练]
+    end
+
+    subgraph Stream["流处理 Stream"]
+        S1[数据持续不断到来] --> S2[来一条处理一条]
+        S2 --> S3[持续输出更新结果]
+        S4[特点：低延迟、实时性强
+适合：实时监控、风控、推荐]
+    end
+
+    style Batch fill:#e3f2fd,stroke:#2196f3
+    style Stream fill:#e8f5e9,stroke:#4caf50
