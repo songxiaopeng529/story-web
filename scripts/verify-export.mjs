@@ -17,7 +17,10 @@ for(const entry of [...content.articles, ...content.works]) {
   const route = `${basePath}/${entry.kind}/${entry.slug}/`;
   assert.ok(html.includes(`href="${route}"`), `Missing homepage link: ${route}`);
   const detail = readFileSync(`${output}/${entry.kind}/${entry.slug}/index.html`, 'utf8');
-  assert.ok(detail.includes(entry.title), `Missing article title: ${entry.slug}`);
+  const escapedTitle = entry.title.replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#x27;',
+  })[character]);
+  assert.ok(detail.includes(`<h1>${escapedTitle}</h1>`), `Missing article title: ${entry.slug}`);
   const imageCount = [...entry.body.matchAll(/!\[[^\]]*\]\([^\n]+\)/g)].length;
   assert.ok((detail.match(/<img\b/g) || []).length >= imageCount, `Missing article images: ${entry.slug}`);
 }

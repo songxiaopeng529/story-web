@@ -1,0 +1,49 @@
+graph TB
+    subgraph Client["用户端"]
+        A[提交作业/上传文件]
+    end
+
+    subgraph HDFS["HDFS 分布式文件系统"]
+        B[NameNode
+总管：记录文件存在哪]
+        C1[DataNode 1
+存数据块]
+        C2[DataNode 2
+存数据块]
+        C3[DataNode 3
+存数据块]
+        B --> C1
+        B --> C2
+        B --> C3
+    end
+
+    subgraph YARN["YARN 资源调度"]
+        D[ResourceManager
+大管家：分配资源]
+        E1[NodeManager 1]
+        E2[NodeManager 2]
+        E3[NodeManager 3]
+        D --> E1
+        D --> E2
+        D --> E3
+    end
+
+    subgraph MR["MapReduce 计算"]
+        F[Map 阶段
+分头处理]
+        G[Shuffle 阶段
+洗牌排序]
+        H[Reduce 阶段
+汇总结果]
+        F --> G --> H
+    end
+
+    A --> B
+    A --> D
+    C1 -.-> F
+    C2 -.-> F
+    C3 -.-> F
+
+    style HDFS fill:#e3f2fd,stroke:#2196f3
+    style YARN fill:#fff3e0,stroke:#ff9800
+    style MR fill:#e8f5e9,stroke:#4caf50
