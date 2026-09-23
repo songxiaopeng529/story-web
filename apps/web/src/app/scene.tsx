@@ -17,8 +17,8 @@ const SPRITE_FRAME_COUNT = SPRITE_COLUMNS * SPRITE_ROWS;
 const SPRITE_END_TIME = 2.25;
 const VIDEO_STARTUP_BUFFER_END = SPRITE_END_TIME + 0.25;
 
-function Mark({ className = "" }: { className?: string }) {
-  return <svg className={className} viewBox="0 0 40 40" fill="none" aria-hidden="true">{Array.from({ length: 12 }, (_, i) => <g key={i} transform={`rotate(${i * 30} 20 20)`}><path d="M18 2h4v7h-4zM18 12h4v4h-4z" fill="currentColor" /></g>)}</svg>;
+function StoryIcon() {
+  return <Image src={assetPath("/images/story/story-icon.png")} alt="" width={128} height={128} className={styles.logoIcon} />;
 }
 
 export function Story({ articles, projects }: { articles: EntrySummary[]; projects: EntrySummary[] }) {
@@ -344,7 +344,7 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
     </div>
     <div className={styles.foreground}>
       <header className={styles.header}>
-        <a href="#story-top" className={styles.logo} aria-label={t("Story home", "Story 首页")}><Mark />Story</a>
+        <a href="#story-top" className={styles.logo} aria-label={t("Story home", "Story 首页")}><StoryIcon />Story</a>
         <nav className={`${styles.nav} ${menuOpen ? styles.navOpen : ""}`} aria-label={t("Main navigation", "主导航")}>
           <a href="#story-top" onClick={() => setMenuOpen(false)}>{t("Home", "首页")}</a>
           <a href="#story-blog" onClick={() => setMenuOpen(false)}>{t("Blog", "博客")}</a>
@@ -382,7 +382,7 @@ export function Story({ articles, projects }: { articles: EntrySummary[]; projec
       <footer className={styles.footer} id="story-contact">
         <div className={styles.sectionLabel}><span><i /> ({t("Let’s create", "联系我")})</span><span>{t("Ideas, conversations, possibilities.", "想法、交流与新的可能。")}</span></div>
         <button className={styles.footerCta} onClick={openContact}>{t("Let’s make", "一起做点")}<br />{t("something. ", "有趣的事。 ")}<span aria-hidden="true">↗</span></button>
-        <div className={styles.footerBottom}><a href="#story-top" className={styles.logo}><Mark />Story</a><a href="https://github.com/songxiaopeng529" target="_blank" rel="noreferrer">GitHub ↗</a><span>© 2026 Story</span><a href="#story-top">{t("Back to top ↑", "返回顶部 ↑")}</a></div>
+        <div className={styles.footerBottom}><a href="#story-top" className={styles.logo}><StoryIcon />Story</a><a href="https://github.com/songxiaopeng529" target="_blank" rel="noreferrer">GitHub ↗</a><span>© 2026 Story</span><a href="#story-top">{t("Back to top ↑", "返回顶部 ↑")}</a></div>
       </footer>
     </div>
     <dialog ref={dialog} className={styles.dialog} onCancel={() => setModal(null)} onClose={() => setModal(null)} onClick={event => { if (event.target === event.currentTarget) setModal(null); }}>

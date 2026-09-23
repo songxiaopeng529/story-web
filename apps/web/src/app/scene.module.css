@@ -63,3 +63,8 @@
 /* Keep the role index inside the portrait's negative space instead of running rules into the face. */
 .services{width:clamp(240px,28vw,520px)}
 @media(max-width:650px){.services{width:52%}}
+
+.logoIcon{display:block;width:35px;height:35px;flex:none}
+@media(max-width:950px){.logoIcon{width:29px;height:29px}}
+.footerBottom .logoIcon{width:28px;height:28px}
+@media(max-width:650px){.footerBottom .logoIcon{width:24px;height:24px}}
