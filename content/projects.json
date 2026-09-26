@@ -46,5 +46,29 @@
       { "zh": "根据使用频率与最近使用情况排序，并支持搜索、置顶和删除。", "en": "Rank items by frequency and recency, with search, pinning, and deletion." },
       { "zh": "提供系统托盘菜单；macOS 自动粘贴需要辅助功能权限。", "en": "Includes a system tray menu. Automatic pasting on macOS requires Accessibility permission." }
     ]
+  },
+  {
+    "slug": "story-picture",
+    "title": "Story Picture",
+    "published": true,
+    "repository": "https://github.com/songxiaopeng529/story-picture",
+    "tags": ["Agent Skill", "Image Generation", "Open Source"],
+    "description": {
+      "zh": "一个开源的 Agent Skill：根据文章主题与用户选择的视觉风格，生成适合文章配图的插画。",
+      "en": "An open-source Agent Skill that creates article-ready illustrations from a topic and a user-selected visual style."
+    },
+    "cover": {
+      "theme": "paper",
+      "kicker": { "zh": "为文章配图的开源 Agent Skill", "en": "An open-source Agent Skill for article art" },
+      "headline": { "zh": "Story Picture", "en": "Story Picture" },
+      "caption": { "zh": "先选风格，再讲好故事。", "en": "Choose a style. Tell the story." },
+      "mark": "✳"
+    },
+    "features": [
+      { "zh": "从主题描述出发，提炼清晰的主体、构图与视觉隐喻。", "en": "Turn a topic description into a clear subject, composition, and visual metaphor." },
+      { "zh": "提供 10 种可选择的插画风格，适用于文章头图、内页插图和知识解说。", "en": "Choose from 10 illustration styles for article headers, inline artwork, and explainers." },
+      { "zh": "每种风格都配有参考图、结构化配方和提示模板。", "en": "Each style includes visual references, a structured recipe, and a prompt template." },
+      { "zh": "使用宿主 Agent 提供的图像生成能力，不绑定单一服务商。", "en": "Use the host agent’s image generator without depending on a single provider." }
+    ]
   }
 ]
